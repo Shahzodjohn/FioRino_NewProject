@@ -1,0 +1,1 @@
+dotnet D:\Shahzod\SPToCore\SPToCore\bin\Debug\netcoreapp3.1\SPToCore.dll scan -cnn "Data source = DESKTOP-R7H6RDJ;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;" -sch * -nsp FioRino_web -ctx FioRinoBaseContext -sf Model -pf Entities/ -f SPToCoreContext.cs 
