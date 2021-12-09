@@ -62,14 +62,29 @@ namespace FioRino_NewProject.Services
             };
             _context.DmUsers.Add(user);
             await _context.SaveChangesAsync();
-            var userAccess = new DmUsersAccess
+            if(user.RoleId == 1)
             {
-                UserId = user.Id,
-                Hurt = user.PositionId == 1 ? true : false,
-                Magazyn = user.PositionId == 2 ? true : false,
-                Archive = false
-            };
-              _context.DmUsersAccesses.Add(userAccess);
+                var userAccess = new DmUsersAccess
+                {
+                    UserId = user.Id,
+                    Hurt = user.PositionId == 1 ? true : false,
+                    Magazyn = user.PositionId == 2 ? true : false,
+                    Archive = false
+                };
+                _context.DmUsersAccesses.Add(userAccess);
+            }
+            else if(user.RoleId == 2)
+            {
+                var userAccess = new DmUsersAccess
+                {
+                    UserId = user.Id,
+                    Hurt = true,
+                    Magazyn = true,
+                    Archive = true
+                };
+                _context.DmUsersAccesses.Add(userAccess);
+            }
+            
             await _context.SaveChangesAsync();
             return user;
         }
@@ -135,7 +150,8 @@ namespace FioRino_NewProject.Services
                             join dmr in _context.DmRoles on dmu.RoleId equals dmr.Id
                             where dmu.Id == currentUser.Id
                             select dmr.RoleName).ToList().First();
-
+            var UserFind = _context.DmUsersAccesses.FirstOrDefault(x=>x.UserId == currentUser.Id);
+            
             var UserInfo = new UserDTO
             {
                 Id = currentUser.Id.ToString(),
@@ -146,7 +162,10 @@ namespace FioRino_NewProject.Services
                 PhoneNumber = currentUser.PhoneNumber,
                 RoleName = roleName,
                 ImagePath = currentUser.Image,
-                Password = "I think you don't have to see the password!"//currentUser.PasswordHash
+                HurtAccess = UserFind.Hurt,
+                MagazynAccess = UserFind.Magazyn,
+                ArchiveAccess = UserFind.Archive,
+                Password = "I think you don't have to see the password!"//currentUser.PasswordHash,   
             };
             return UserInfo;
         }

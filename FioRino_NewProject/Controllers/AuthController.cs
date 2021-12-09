@@ -144,7 +144,7 @@ namespace FioRino_NewProject.Controllers
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> CurrentUserAsync()
         {
-            var claim = this.User.Identity as ClaimsIdentity;
+            var claim = User.Identity as ClaimsIdentity;
             var currentUser = await _repository.GetUser(claim.GetUserId<int>());
             var UserInfo = await _service.CurrentUser(currentUser);
             var userEmail = claim.FindFirst(ClaimTypes.Name)?.Value;

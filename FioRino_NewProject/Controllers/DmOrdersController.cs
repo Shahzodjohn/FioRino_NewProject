@@ -1,8 +1,9 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
+using FioRino_NewProject.Model;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
-using FioRino_web.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -41,6 +42,7 @@ namespace FioRino_NewProject.Controllers
         public class MagazynListParams { public int SearchString { get; set; } }
 
         [HttpGet("MagazynList")]
+        [Authorize("MagazynAccess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_MagazynListResult>>> PostDmOrdersMagazynList([FromQuery] MagazynListParams parameters)
         {
             using (SPToCoreContext db = new SPToCoreContext())
@@ -53,6 +55,7 @@ namespace FioRino_NewProject.Controllers
         //// EXPOSE_dm_Orders_List
 
         [HttpGet("List")]
+        [Authorize("HurtAccess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ListResult>>> PostDmOrdersList([FromQuery] ListParams parameters)
         {
             using (SPToCoreContext db = new SPToCoreContext())
@@ -63,7 +66,7 @@ namespace FioRino_NewProject.Controllers
         }
         public class ArchiveListParams { public int SearchString { get; set; } }
         // EXPOSE_dm_Orders_ArchiveList
-
+        [Authorize("ArchiveAccess")]
         [HttpGet("ArchiveList")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ArchiveListResult>>> PostDmOrdersArchiveList([FromQuery] ArchiveListParams parameters)
         {
@@ -141,6 +144,7 @@ namespace FioRino_NewProject.Controllers
             }
         }
         [HttpPost("SelectingAllNewOrders")]
+        [Authorize("HurtAccess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_SelectingAllNewOrdersResult>>> PostDmOrdersSelectingAllNewOrders()
         {
             using (SPToCoreContext db = new SPToCoreContext())

@@ -54,8 +54,9 @@ namespace FioRino_NewProject.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=lab500.nc-one.com, 1530;Database=FioRinoBase;User ID=sa;Password=KFaerZ2dZRiM");
-                //optionsBuilder.UseSqlServer("Data source = DESKTOP-R7H6RDJ;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;");
+                //optionsBuilder.UseSqlServer("Data source = SHAHZOD;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;");
             }
         }
 
@@ -105,6 +106,11 @@ namespace FioRino_NewProject.Data
                     .HasColumnName("randomNumber");
 
                 entity.Property(e => e.ValidDate).HasColumnType("date");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.DmCodesForResetPasswords)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__dm_CodesF__UserI__01142BA1");
             });
 
             modelBuilder.Entity<DmFileWz>(entity =>
@@ -205,12 +211,12 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.Receiver)
                     .WithMany(p => p.DmOrderReceivers)
                     .HasForeignKey(d => d.ReceiverId)
-                    .HasConstraintName("FK__dm_Orders__Recei__0F624AF8");
+                    .HasConstraintName("FK__dm_Orders__Recei__0C1BC9F9");
 
                 entity.HasOne(d => d.Sender)
                     .WithMany(p => p.DmOrderSenders)
                     .HasForeignKey(d => d.SenderId)
-                    .HasConstraintName("FK__dm_Orders__Sende__10566F31");
+                    .HasConstraintName("FK__dm_Orders__Sende__0D0FEE32");
             });
 
             modelBuilder.Entity<DmOrderArchievum>(entity =>
@@ -254,7 +260,7 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.DmOrderProducts)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK__dm_OrderP__Categ__5AEE82B9");
+                    .HasConstraintName("FK__dm_OrderP__Categ__40C49C62");
 
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.DmOrderProducts)
@@ -270,7 +276,7 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.ProductStatuses)
                     .WithMany(p => p.DmOrderProducts)
                     .HasForeignKey(d => d.ProductStatusesId)
-                    .HasConstraintName("FK__dm_OrderP__Produ__01D345B0");
+                    .HasConstraintName("FK__dm_OrderP__Produ__58671BC9");
 
                 entity.HasOne(d => d.Size)
                     .WithMany(p => p.DmOrderProducts)
@@ -280,12 +286,12 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.Skucode)
                     .WithMany(p => p.DmOrderProducts)
                     .HasForeignKey(d => d.SkucodeId)
-                    .HasConstraintName("FK__dm_OrderP__SKUco__5BE2A6F2");
+                    .HasConstraintName("FK__dm_OrderP__SKUco__1B9317B3");
 
                 entity.HasOne(d => d.UniqueProduct)
                     .WithMany(p => p.DmOrderProducts)
                     .HasForeignKey(d => d.UniqueProductId)
-                    .HasConstraintName("FK__dm_OrderP__Uniqu__2057CCD0");
+                    .HasConstraintName("FK__dm_OrderP__Uniqu__1758727B");
             });
 
             modelBuilder.Entity<DmOrderStatus>(entity =>
@@ -323,6 +329,10 @@ namespace FioRino_NewProject.Data
                     .HasMaxLength(50)
                     .HasColumnName("GTIN");
 
+                entity.Property(e => e.ProductName)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
                 entity.Property(e => e.Skunumber)
                     .HasMaxLength(50)
                     .HasColumnName("SKUnumber");
@@ -330,17 +340,17 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.DmProducts)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK__dm_Produc__Categ__078C1F06");
+                    .HasConstraintName("FK__dm_Produc__Categ__7E8CC4B1");
 
                 entity.HasOne(d => d.Size)
                     .WithMany(p => p.DmProducts)
                     .HasForeignKey(d => d.SizeId)
-                    .HasConstraintName("FK__dm_Produc__SizeI__13F1F5EB");
+                    .HasConstraintName("FK__dm_Produc__SizeI__0539C240");
 
                 entity.HasOne(d => d.UniqueProduct)
                     .WithMany(p => p.DmProducts)
                     .HasForeignKey(d => d.UniqueProductId)
-                    .HasConstraintName("FK__dm_Produc__Uniqu__1E6F845E");
+                    .HasConstraintName("FK__dm_Produc__Uniqu__15702A09");
             });
 
             modelBuilder.Entity<DmProductStatus>(entity =>
@@ -399,29 +409,29 @@ namespace FioRino_NewProject.Data
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.DmStorages)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK__dm_Storag__Categ__11158940");
+                    .HasConstraintName("FK__dm_Storag__Categ__035179CE");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.DmStorages)
                     .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__dm_Storag__Produ__0F2D40CE");
+                    .HasConstraintName("FK__dm_Storag__Produ__0169315C");
 
                 entity.HasOne(d => d.Size)
                     .WithMany(p => p.DmStorages)
                     .HasForeignKey(d => d.SizeId)
-                    .HasConstraintName("FK__dm_Storag__SizeI__10216507");
+                    .HasConstraintName("FK__dm_Storag__SizeI__025D5595");
 
                 entity.HasOne(d => d.UniqueProduct)
                     .WithMany(p => p.DmStorages)
                     .HasForeignKey(d => d.UniqueProductId)
-                    .HasConstraintName("FK__dm_Storag__Uniqu__51EF2864");
+                    .HasConstraintName("FK__dm_Storag__Uniqu__71D1E811");
             });
 
             modelBuilder.Entity<DmUniqueProduct>(entity =>
             {
                 entity.ToTable("dm_UniqueProducts");
 
-                entity.Property(e => e.ProductName).HasMaxLength(50);
+                entity.Property(e => e.ProductName).HasMaxLength(250);
             });
 
             modelBuilder.Entity<DmUser>(entity =>
@@ -439,7 +449,7 @@ namespace FioRino_NewProject.Data
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.Image).HasMaxLength(50);
+                entity.Property(e => e.Image).HasMaxLength(250);
 
                 entity.Property(e => e.LastName)
                     .IsRequired()
@@ -470,7 +480,7 @@ namespace FioRino_NewProject.Data
                     .WithMany(p => p.DmUsersAccesses)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__dm_UsersA__UserI__66EA454A");
+                    .HasConstraintName("FK__dm_UsersA__UserI__5832119F");
             });
 
             modelBuilder.Entity<DmWzMagazyn>(entity =>
@@ -479,17 +489,30 @@ namespace FioRino_NewProject.Data
 
                 entity.Property(e => e.CreatedAt).HasColumnType("date");
 
+                entity.HasOne(d => d.OrderProduct)
+                    .WithMany(p => p.DmWzMagazyns)
+                    .HasForeignKey(d => d.OrderProductId)
+                    .HasConstraintName("FK__dm_WzMaga__Order__257187A8");
+
                 entity.HasOne(d => d.OrderStatuses)
                     .WithMany(p => p.DmWzMagazyns)
                     .HasForeignKey(d => d.OrderStatusesId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_dm_WzMagazyn_dm_OrderStatuses");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.DmWzMagazyns)
                     .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_dm_WzMagazyn_dm_Products");
+
+                entity.HasOne(d => d.Receiver)
+                    .WithMany(p => p.DmWzMagazynReceivers)
+                    .HasForeignKey(d => d.ReceiverId)
+                    .HasConstraintName("FK__dm_WzMaga__Recie__19DFD96B");
+
+                entity.HasOne(d => d.Sender)
+                    .WithMany(p => p.DmWzMagazynSenders)
+                    .HasForeignKey(d => d.SenderId)
+                    .HasConstraintName("FK__dm_WzMaga__Sende__1AD3FDA4");
             });
 
             modelBuilder.Entity<DomainEntity>(entity =>

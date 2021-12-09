@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FioRino_NewProject.Entities
 {
-    public partial class DmUsersAccess 
+    public partial class DmUsersAccess
     {
         public int Id { get; set; }
         public int UserId { get; set; }

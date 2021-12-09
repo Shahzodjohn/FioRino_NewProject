@@ -7,6 +7,11 @@ namespace FioRino_NewProject.Entities
 {
     public partial class DmOrderProduct
     {
+        public DmOrderProduct()
+        {
+            DmWzMagazyns = new HashSet<DmWzMagazyn>();
+        }
+
         public int Id { get; set; }
         public int? ProductId { get; set; }
         public int OrderId { get; set; }
@@ -25,5 +30,6 @@ namespace FioRino_NewProject.Entities
         public virtual DmSize Size { get; set; }
         public virtual DmSkucode Skucode { get; set; }
         public virtual DmUniqueProduct UniqueProduct { get; set; }
+        public virtual ICollection<DmWzMagazyn> DmWzMagazyns { get; set; }
     }
 }

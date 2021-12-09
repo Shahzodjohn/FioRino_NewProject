@@ -21,6 +21,9 @@ using FioRino_NewProject.Settings;
 using FioRino_NewProject.Responses;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using FioRino_NewProject.Entities;
+using Microsoft.AspNetCore.Authorization;
+using FioRino_NewProject.AccessAttribute;
 
 namespace FioRino_NewProject
 {
@@ -55,11 +58,12 @@ namespace FioRino_NewProject
             services.AddScoped<IParsingProductsService, ParsingProductsService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
+            services.AddTransient<IUserAccessRepository, UserAccessRepository>();
+            services.AddTransient<IAuthorizationHandler, AccessAttribute.AccessHandler>();
             
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();
-            
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -80,6 +84,27 @@ namespace FioRino_NewProject
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                     };
                 });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("HurtAccess", policy => 
+                {
+                    policy.Requirements.Add(new UserAccess { Hurt = true });
+                    policy.AuthenticationSchemes.Add(
+                                        JwtBearerDefaults.AuthenticationScheme);
+                });
+                options.AddPolicy("MagazynAccess", policy =>
+                {
+                    policy.Requirements.Add(new UserAccess { Magazyn = true });
+                    policy.AuthenticationSchemes.Add(
+                                        JwtBearerDefaults.AuthenticationScheme);
+                });
+                options.AddPolicy("ArchiveAccess", policy =>
+                {
+                    policy.Requirements.Add(new UserAccess { Magazyn = true });
+                    policy.AuthenticationSchemes.Add(
+                                        JwtBearerDefaults.AuthenticationScheme);
+                });
+            });
             
             services.AddCors();
             services.AddControllers();
@@ -109,7 +134,6 @@ namespace FioRino_NewProject
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath/*, "wwwroot"*/)),
-                //RequestPath = "/Images"
             });
 
 

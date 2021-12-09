@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FioRino_NewProject.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.DataTransferObjects
 {
-    public class UserDTO
+    public partial class UserDTO
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
@@ -16,5 +17,8 @@ namespace FioRino_NewProject.DataTransferObjects
         public string PositionName { get; set; }
         public string RoleName { get; set; }
         public string ImagePath { get; set; }
+        public bool? HurtAccess { get; set; }
+        public bool? MagazynAccess { get; set; }
+        public bool? ArchiveAccess { get; set; }
     }
 }

@@ -11,5 +11,7 @@ namespace FioRino_NewProject.Entities
         public string RandomNumber { get; set; }
         public DateTime? ValidDate { get; set; }
         public int? UserId { get; set; }
+
+        public virtual DmUser User { get; set; }
     }
 }

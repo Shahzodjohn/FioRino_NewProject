@@ -17,8 +17,8 @@ namespace FioRino_NewProject.Entities
         public DateTime? UpdatedAt { get; set; }
         public int? OrderStatusId { get; set; }
         public int? OrderArchievumId { get; set; }
-        public bool? IsInMagazyn { get; set; }
         public string SourceOfOrder { get; set; }
+        public bool? IsInMagazyn { get; set; }
         public int? Amount { get; set; }
         public string OrderExecutor { get; set; }
         public int? ReceiverId { get; set; }
