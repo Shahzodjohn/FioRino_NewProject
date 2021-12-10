@@ -26,6 +26,7 @@ namespace FioRino_NewProject.Repositories
         public async Task<int> InsertUniqueProductIfNull(DmUniqueProduct dmProduct, string ProductName)
         {
             int ProductId = 0;
+
             if (dmProduct == null)
             {
                 var newTable = _context.DmUniqueProducts.Add(new DmUniqueProduct

@@ -17,11 +17,22 @@ namespace FioRino_NewProject.Repositories
             _context = context;
         }
 
-        public async Task<int> CreateSizeIfNull(DmSize findSize, int SizeNum, string resultString)
+        public async Task<int> CreateSizeIfNull(DmSize findSize, int SizeNum, string resultString, string FindSizeAlphabet)
         {
             int sizeId = 0;
-            if (findSize == null)
+            var size = await _context.DmSizes.FirstOrDefaultAsync(x=>x.Title == FindSizeAlphabet);
+            if (findSize == null || size == null)
             {
+                if (size == null)
+                {
+                    var addingSizes = _context.DmSizes.Add(new DmSize
+                    {
+                        Title = FindSizeAlphabet
+                    });
+                    await _context.SaveChangesAsync();
+                    return sizeId = addingSizes.Entity.Id;
+                }
+                
                 if (SizeNum != 0 || resultString == "")
                 {
                     var addingSizes = _context.DmSizes.Add(new DmSize
@@ -112,6 +123,7 @@ namespace FioRino_NewProject.Repositories
             }
             else
             {
+                if (size != null) { return sizeId = size.Id; }
                 sizeId = findSize.Id;
             }
             return sizeId;
