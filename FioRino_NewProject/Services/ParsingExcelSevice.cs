@@ -140,18 +140,28 @@ namespace FioRino_NewProject.Services
 
         public async Task<int> InsertProductsToDmProducts(string ProductName, int uniqueproductId, int categoryId, int SizeId, string GtinPaging)
         {
-            var insertProds = new DmProduct
+            var findProduct = await _context.DmProducts.FirstOrDefaultAsync(x=>x.Gtin == GtinPaging);
+            int ProductId = 0;
+            if(findProduct == null)
             {
-                ProductName = ProductName,
-                UniqueProductId = uniqueproductId,
-                CategoryId = categoryId,
-                SizeId = SizeId,
-                Gtin = GtinPaging
-            };
-            _context.DmProducts.Add(insertProds);
-            await _context.SaveChangesAsync();
-            var ProductId = insertProds.Id;
-            return ProductId;
+                var insertProds = new DmProduct
+                {
+                    ProductName = ProductName,
+                    UniqueProductId = uniqueproductId,
+                    CategoryId = categoryId,
+                    SizeId = SizeId,
+                    Gtin = GtinPaging
+                };
+                _context.DmProducts.Add(insertProds);
+                await _context.SaveChangesAsync();
+                return ProductId = insertProds.Id;
+            }
+            else
+            {
+                return ProductId = findProduct.Id;
+            }
+            
+            
         }
 
         public async Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging)

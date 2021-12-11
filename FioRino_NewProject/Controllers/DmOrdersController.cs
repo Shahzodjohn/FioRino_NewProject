@@ -112,7 +112,6 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 return await db.EXPOSE_dm_Orders_SelectFromArchivumAsync /**/ (parameters.SearchString);
-
             }
         }
         [HttpDelete("{id}")]

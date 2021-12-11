@@ -156,8 +156,17 @@ namespace FioRino_NewProject.Controllers
                     findProduct.Amount = dTO.Amount;
                     await _opService.MinusingBackAfterReturningAmount(findOrderProduct, dTO.Id);
                 }
-                else
+                else 
+                {
+                    if (findProduct.ProductStatusesId == 1)
+                    {
+                        findProduct.Amount = dTO.Amount;
+                        await _save.SaveAsync();
+                        return Ok(new Response { Status = "OK", Message = $"Numer zamówienia {findProduct.Id} został pomyślnie zaktualizowany!" });
+                    }
+                        
                     return BadRequest(new Response { Status = "Error", Message = "Wybierz odpowiednią ilość!" });
+                }
             }
             else
             {

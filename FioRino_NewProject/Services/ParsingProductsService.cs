@@ -77,7 +77,7 @@ namespace FioRino_NewProject.Services
             for (int i = 0; ; i++)
             {
                 var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/{linkCount}?searchText=&isPublic=&amountPerPage=1");
-                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/92?amountPerPage=1&searchText=300");
+                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=50&searchText=5904083473247&isPublic=");
                 //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=100&searchText=Pi%C5%82eczka+do+masa%C5%BCu+z+kolcami&isPublic=");
                 RstClientNew.Timeout = -1;
                 var RestRequestNew = new RestRequest(Method.GET);
@@ -101,7 +101,7 @@ namespace FioRino_NewProject.Services
                     foreach (var item in web.DocumentNode.SelectNodes(xpath).ToList().Skip(1))
                     {
                         var items = item.ChildNodes;
-                        var gtin = await _productRepository.FindProductByGtinAsync(items[3].InnerText.Trim());
+                        var gtin = items[3].InnerText.Trim();
                         var isClassicCategory = items[1].InnerText.Trim().Split(" ").ToList().Any(x => x.ToLower() == "classic");
                         var isFasterCategory = items[1].InnerText.Trim().Split(" ").ToList().Any(x => x.ToLower() == "faster");
                         var productName = isClassicCategory ? items[1].InnerText.Trim().Replace("CLASSIC", " ") :
@@ -122,8 +122,7 @@ namespace FioRino_NewProject.Services
                         var categoryId = (isClassicCategory ? classicCategory.Id :
                                 (isFasterCategory ? fasterCategory.Id : nocategory.Id));
                         
-                        var gting = new List<string>();
-                        gting.Add(items[3].InnerText.Trim());
+                        
                         #region EANCodesDonwloading
                         //foreach (var gtinImages in gting)
                         //{
@@ -206,7 +205,7 @@ namespace FioRino_NewProject.Services
                             }
                         }
 
-                        var AddProd = await _pService.InsertDmProduct(MatchingProducts, categoryId, gting[0], ProductId);
+                        var AddProd = await _pService.InsertDmProduct(MatchingProducts, categoryId, gtin, ProductId);
                         if (sizeId != 0)
                         {
                             AddProd.SizeId = sizeId;
