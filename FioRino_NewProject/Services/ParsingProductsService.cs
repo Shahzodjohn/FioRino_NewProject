@@ -77,7 +77,7 @@ namespace FioRino_NewProject.Services
             for (int i = 0; ; i++)
             {
                 var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/{linkCount}?searchText=&isPublic=&amountPerPage=1");
-                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=100&searchText=ekoTuptusie+MINI+BOCIANKI&isPublic=");
+                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/92?amountPerPage=1&searchText=300");
                 //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=100&searchText=Pi%C5%82eczka+do+masa%C5%BCu+z+kolcami&isPublic=");
                 RstClientNew.Timeout = -1;
                 var RestRequestNew = new RestRequest(Method.GET);
@@ -111,7 +111,7 @@ namespace FioRino_NewProject.Services
                         //string ProdName;
                         string output;
                         var ProdName = productName.Contains("rozm.") ? productName.Replace("rozm.", " ") : productName.Replace("r.","");
-                        if (!ProdName.Contains("cm"))
+                        if (!ProdName.Contains("cm") && !ProdName.Contains("MET"))
                         {
                              output = Regex.Replace(ProdName, @"[\0-9]", " ");
                         }
