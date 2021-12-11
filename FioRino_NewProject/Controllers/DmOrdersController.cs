@@ -66,8 +66,8 @@ namespace FioRino_NewProject.Controllers
         }
         public class ArchiveListParams { public int SearchString { get; set; } }
         // EXPOSE_dm_Orders_ArchiveList
-        [Authorize("ArchiveAccess")]
         [HttpGet("ArchiveList")]
+        [Authorize("ArchiveAccess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ArchiveListResult>>> PostDmOrdersArchiveList([FromQuery] ArchiveListParams parameters)
         {
             using (SPToCoreContext db = new SPToCoreContext())

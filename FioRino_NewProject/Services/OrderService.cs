@@ -62,7 +62,8 @@ namespace FioRino_NewProject.Services
                     }
                     
                 }
-                _context.DmOrders.RemoveRange(dmOrders);
+                
+                _context.DmOrders.Remove(dmOrders);
                 await _context.SaveChangesAsync();
                 return new Response { Status = "Ok", Message = "Success!" };
             }

@@ -24,11 +24,16 @@ namespace FioRino_NewProject.Services
         public async Task<Response> UpdateUserById(int id, UpdateUserDTO dmUsers)
         {
             var currentUser = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id == id);
+            var findUserAccess = await _context.DmUsersAccesses.FirstOrDefaultAsync(x=>x.UserId == id);
+
             currentUser.FirstName = dmUsers.FirstName;
             currentUser.LastName = dmUsers.LastName;
             currentUser.Email = dmUsers.Email;
             currentUser.PhoneNumber = dmUsers.PhoneNumber;
+            
             currentUser.PositionId = dmUsers.PositionId;
+            if (dmUsers.RoleId == 2) { findUserAccess.Hurt = true; findUserAccess.Magazyn = true; findUserAccess.Archive = true; }
+            
             currentUser.RoleId = dmUsers.RoleId;
             await _context.SaveChangesAsync();
             var @Valid = dmUsers.Email.Contains("@");

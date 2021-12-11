@@ -35,7 +35,6 @@ namespace FioRino_NewProject.Controllers
         }
 
         [HttpPost("CreateOrder")]
-        [Authorize(Policy = "AtLeast21")]
         public async Task<IActionResult> CreateOrder(IFormFile file, int Id)
         {
             try

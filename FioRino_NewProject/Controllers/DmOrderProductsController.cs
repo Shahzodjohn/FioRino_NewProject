@@ -75,6 +75,7 @@ namespace FioRino_NewProject.Controllers
                     }
                     else
                         findDmOrderProduct.ProductStatusesId = 1;
+                    await _save.SaveAsync();
                 }
                 else
                 {

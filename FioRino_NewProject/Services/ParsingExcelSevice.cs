@@ -100,6 +100,7 @@ namespace FioRino_NewProject.Services
                 {
                     SkucodeName = SkuNumber
                 };
+                _context.DmSkucodes.Add(addSKU);
                 await _context.SaveChangesAsync();
                 SkuId = addSKU.Id;
             }

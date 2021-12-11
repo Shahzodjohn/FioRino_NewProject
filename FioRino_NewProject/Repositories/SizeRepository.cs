@@ -21,9 +21,9 @@ namespace FioRino_NewProject.Repositories
         {
             int sizeId = 0;
             var size = await _context.DmSizes.FirstOrDefaultAsync(x=>x.Title == FindSizeAlphabet);
-            if (findSize == null || size == null)
+            if (findSize == null)
             {
-                if (size == null)
+                if (FindSizeAlphabet != null)
                 {
                     var addingSizes = _context.DmSizes.Add(new DmSize
                     {
@@ -32,7 +32,7 @@ namespace FioRino_NewProject.Repositories
                     await _context.SaveChangesAsync();
                     return sizeId = addingSizes.Entity.Id;
                 }
-                
+
                 if (SizeNum != 0 || resultString == "")
                 {
                     var addingSizes = _context.DmSizes.Add(new DmSize
@@ -43,6 +43,7 @@ namespace FioRino_NewProject.Repositories
                     sizeId = addingSizes.Entity.Id;
                     //var num = addingSizes.Entity.Id;
                 }
+                
                 var FindCurrentSize = _context.DmSizes.FirstOrDefault(x => x.Id == sizeId);
 
                 #region Deviding by Sizes
