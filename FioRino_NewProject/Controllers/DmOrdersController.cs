@@ -1,6 +1,7 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
+using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,16 +19,18 @@ namespace FioRino_NewProject.Controllers
     public class DmOrdersController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IUserRepository _userRepository;
         private readonly ISaveRepository _save;
         private readonly IOrderProductsService _orderProductService;
         private readonly IOrderService _oService;
 
-        public DmOrdersController(IOrderRepository oRepository, ISaveRepository save, IOrderService oService, IOrderProductsService orderProductService)
+        public DmOrdersController(IOrderRepository oRepository, ISaveRepository save, IOrderService oService, IOrderProductsService orderProductService, IUserRepository userRepository)
         {
             _orderRepository = oRepository;
             _save = save;
             _oService = oService;
             _orderProductService = orderProductService;
+            _userRepository = userRepository;
         }
 
         [HttpPost("Amount")]
@@ -127,17 +130,11 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 int? orderId = 0;
+                var findUser = await _userRepository.GetUser(parameters.SenderId);
                 parameters.OrderExecutor = "FIORINO Izabela Gądek-Pagacz"; parameters.SourceOfOrder = "Utworzone ręcznie"; parameters.Is_InMagazyn = false;
-
-                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt,
-                    parameters.UpdatedAt,
-                    parameters.OrderStatusId,
-                    parameters.Is_InMagazyn,
-                    parameters.SenderId,
-                    parameters.Amount,
-                    parameters.SourceOfOrder,
-                    parameters.OrderExecutor,
-                    ref orderId);
+                parameters.SenderName = findUser.FirstName + " " + findUser.LastName;
+                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt,parameters.UpdatedAt,parameters.OrderStatusId,parameters.Is_InMagazyn,parameters.SourceOfOrder,
+                parameters.OrderExecutor,parameters.SenderName,ref orderId);
                 await _save.SaveAsync();
                 return Ok(new Response { Message = "OK", Status = "OrderId = " + orderId.ToString() });
             }

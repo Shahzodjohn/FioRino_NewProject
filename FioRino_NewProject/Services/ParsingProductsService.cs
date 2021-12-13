@@ -77,7 +77,7 @@ namespace FioRino_NewProject.Services
             for (int i = 0; ; i++)
             {
                 var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/{linkCount}?searchText=&isPublic=&amountPerPage=1");
-                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=50&searchText=5904083473247&isPublic=");
+                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/2?amountPerPage=1&searchText=ekoTuptusie");
                 //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=100&searchText=Pi%C5%82eczka+do+masa%C5%BCu+z+kolcami&isPublic=");
                 RstClientNew.Timeout = -1;
                 var RestRequestNew = new RestRequest(Method.GET);
@@ -146,8 +146,12 @@ namespace FioRino_NewProject.Services
                         string FindSizeAlphabet;
                         var containProduct = await _uniqueProductRepository.FindUniqueProductByName(MatchingProducts);
                         int ProductId = await _uniqueProductRepository.InsertUniqueProductIfNull(containProduct, MatchingProducts);
-                        
-                        var resultString = Regex.Match(PorductFullName, @"\d+").Value;
+
+
+
+
+                        var splitLastIndex = PorductFullName.Split(" ").Last();
+                        var resultString = Regex.Match(splitLastIndex, @"\d+").Value;
                         if (MatchingProducts.Split(" ").Last() == "M" ||
                              MatchingProducts.Split(" ").Last() == "S" ||
                              MatchingProducts.Split(" ").Last() == "L" ||

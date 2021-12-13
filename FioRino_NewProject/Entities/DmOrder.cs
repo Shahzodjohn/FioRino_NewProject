@@ -26,6 +26,8 @@ namespace FioRino_NewProject.Entities
         public bool? IsInArchievum { get; set; }
         public bool? IsBlocked { get; set; }
         public DateTime? DateOfRelease { get; set; }
+        public string SenderName { get; set; }
+        public string ReceiverName { get; set; }
 
         public virtual DmOrderArchievum OrderArchievum { get; set; }
         public virtual DmUser Receiver { get; set; }

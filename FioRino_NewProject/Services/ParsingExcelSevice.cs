@@ -36,7 +36,8 @@ namespace FioRino_NewProject.Services
                 CreatedAt = DateTime.Today,
                 OrderStatusId = 1,
                 Amount = 0,
-                SenderId = currentUser.Id,
+                SenderName = currentUser.FirstName + " " + currentUser.LastName,
+                //SenderId = currentUser.Id, 
                 SourceOfOrder = "Wgrane do systemu",
                 OrderExecutor = "FIORINO Izabela Gądek-Pagacz",
                 IsInArchievum = false

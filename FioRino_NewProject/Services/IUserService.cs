@@ -11,5 +11,6 @@ namespace FioRino_NewProject.Services
     {
         Task<Response> UpdateUserById(int id, UpdateUserDTO dmUsers);
         Task<Response> CheckValidityEmail(int id, UpdateUserDTO dmUsers);
+        Task DeleteUser(int Id);
     }
 }

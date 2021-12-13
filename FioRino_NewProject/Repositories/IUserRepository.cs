@@ -13,7 +13,7 @@ namespace FioRino_NewProject.Repositories
         Task<DmUser> Create(DmUser user);
         Task<DmUser> GetByEmail(string email);
         Task<DmUser> GetUser(int Id);
-        DmUser Delete(DmUser dmUser);
+        Task<DmUser> Delete(DmUser dmUser);
         DmUser UserRole(int roleId);
     }
 }

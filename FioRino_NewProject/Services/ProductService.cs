@@ -57,13 +57,14 @@ namespace FioRino_NewProject.Services
             return findProduct;
         }
 
-        public async Task SettingUpReceiver(DmOrder dmOrder,int CurrentUserId, int SenderId)
+        public async Task SettingUpReceiver(DmOrder dmOrder,int CurrentUserId, string SenderName)
         {
-            var User = await _userRepository.GetUser(SenderId);
+            var User = await _context.DmUsers.FirstOrDefaultAsync(x=>x.FirstName + " " + x.LastName == SenderName);
             var currentUser = await _userRepository.GetUser(CurrentUserId);
-            if (User.Id != currentUser.Id && dmOrder.IsInMagazyn == true)
+            var findOrder = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == dmOrder.Id);
+            if (findOrder.ReceiverName == null && User != currentUser && dmOrder.IsInMagazyn == true)
             {
-                dmOrder.ReceiverId = currentUser.Id;
+                dmOrder.ReceiverName = currentUser.FirstName + " " + currentUser.LastName;
             }
             dmOrder.OrderStatusId = 2;
             await _context.SaveChangesAsync();

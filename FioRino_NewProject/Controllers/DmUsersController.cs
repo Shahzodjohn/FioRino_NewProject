@@ -23,6 +23,7 @@ namespace FioRino_NewProject.Controllers
     {
         private readonly IUserService _uService;
         private readonly IUserRepository _userRepository;
+        private readonly IUserAccessRepository _accessRepository;
 
         public DmUsersController(FioRinoBaseContext context, IUserRepository userReposiotory, IUserService uService, IUserRepository userRepository)
         {
@@ -38,7 +39,7 @@ namespace FioRino_NewProject.Controllers
             {
                 return BadRequest(new Response { Status = "Error", Message = $"{find.Message}" });
             }   
-            await _uService.UpdateUserById(id, dmUsers);
+            //await _uService.UpdateUserById(id, dmUsers);
             return NoContent();
         }
 
@@ -69,6 +70,23 @@ namespace FioRino_NewProject.Controllers
                  db.EXPOSE_dm_UsersAccess_UpdateAccesses /**/ (parameters.UserId ,parameters.Hurt, parameters.Magazyn, parameters.Archive);
                 return Ok();
             }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDmUsers(int id)
+        {
+            await _uService.DeleteUser(id);
+            return NoContent();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is DmUsersController controller &&
+                   EqualityComparer<IUserAccessRepository>.Default.Equals(_accessRepository, controller._accessRepository);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_accessRepository);
         }
     }
 }

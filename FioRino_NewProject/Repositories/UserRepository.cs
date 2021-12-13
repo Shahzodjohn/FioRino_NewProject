@@ -38,12 +38,12 @@ namespace FioRino_NewProject.Repositories
         {
             return await _context.DmUsers.FirstOrDefaultAsync(e => e.Id == Id);
         }
-        
-        public DmUser Delete(DmUser dmUser)
+
+        public async Task<DmUser> Delete(DmUser dmUser)
         {
            var user = _context.DmUsers.FindAsync(dmUser);
            _context.Remove(user);
-           _context.SaveChanges();
+           await _context.SaveChangesAsync();
            return dmUser;
         }
 

@@ -199,6 +199,10 @@ namespace FioRino_NewProject.Data
 
                 entity.Property(e => e.OrderExecutor).HasMaxLength(50);
 
+                entity.Property(e => e.ReceiverName).HasMaxLength(50);
+
+                entity.Property(e => e.SenderName).HasMaxLength(50);
+
                 entity.Property(e => e.SourceOfOrder).HasMaxLength(50);
 
                 entity.Property(e => e.UpdatedAt).HasColumnType("date");

@@ -31,16 +31,11 @@ namespace FioRino_NewProject.Controllers
             {
                 var currentOrder = await _orderRepository.FindOrder(parameters.OrderId);
                 var solution = await db.EXPOSE_dm_Products_ByOrderIdAsync /**/ (parameters.OrderId, parameters.CurrentUserId);
-                await _pService.SettingUpReceiver(currentOrder, parameters.CurrentUserId, currentOrder.SenderId ?? 0);
+                await _pService.SettingUpReceiver(currentOrder, parameters.CurrentUserId, currentOrder.SenderName);
                 return solution;
             }
         }
-        public class SelectingByGtinNumberParams
-        {
-            public string Gtin { get; set; }
-            public int Amount { get; set; }
-            public int SkuCodeId { get; set; }
-        }
+        
         [HttpPost("SelectingByGtinNumber")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Products_SelectingByGtinNumberResult>>> PostDmProductsSelectingByGtinNumber([FromBody] SelectingByGtinNumberParams parameters)
         {
@@ -60,5 +55,6 @@ namespace FioRino_NewProject.Controllers
 
             }
         }
+        
     }
 }
