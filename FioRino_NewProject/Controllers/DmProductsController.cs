@@ -35,7 +35,6 @@ namespace FioRino_NewProject.Controllers
                 return solution;
             }
         }
-        
         [HttpPost("SelectingByGtinNumber")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Products_SelectingByGtinNumberResult>>> PostDmProductsSelectingByGtinNumber([FromBody] SelectingByGtinNumberParams parameters)
         {

@@ -58,6 +58,7 @@ namespace FioRino_NewProject
             services.AddScoped<IParsingProductsService, ParsingProductsService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
+            services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddTransient<IUserAccessRepository, UserAccessRepository>();
             services.AddTransient<IAuthorizationHandler, AccessAttribute.AccessHandler>();
             

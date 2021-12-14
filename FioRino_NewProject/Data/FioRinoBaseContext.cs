@@ -21,6 +21,7 @@ namespace FioRino_NewProject.Data
         public virtual DbSet<DeliveryReport> DeliveryReports { get; set; }
         public virtual DbSet<DmCategory> DmCategories { get; set; }
         public virtual DbSet<DmCodesForResetPassword> DmCodesForResetPasswords { get; set; }
+        public virtual DbSet<DmDownloadingStatus> DmDownloadingStatuses { get; set; }
         public virtual DbSet<DmFileWz> DmFileWzs { get; set; }
         public virtual DbSet<DmLogEntry> DmLogEntries { get; set; }
         public virtual DbSet<DmOrder> DmOrders { get; set; }
@@ -56,7 +57,6 @@ namespace FioRino_NewProject.Data
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=lab500.nc-one.com, 1530;Database=FioRinoBase;User ID=sa;Password=KFaerZ2dZRiM");
-                //optionsBuilder.UseSqlServer("Data source = SHAHZOD;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;");
             }
         }
 
@@ -111,6 +111,15 @@ namespace FioRino_NewProject.Data
                     .WithMany(p => p.DmCodesForResetPasswords)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK__dm_CodesF__UserI__01142BA1");
+            });
+
+            modelBuilder.Entity<DmDownloadingStatus>(entity =>
+            {
+                entity.ToTable("dm_DownloadingStatus");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.SuccessDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<DmFileWz>(entity =>

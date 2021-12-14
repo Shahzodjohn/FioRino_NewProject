@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Repositories
 {
-    public interface ISizeRepository
+    public interface IStatusRepository
     {
-        Task<DmSize> FindSizeByNumber(int SizeNum);
-        Task<int> CreateSizeIfNull(DmSize findSize, int SizeNum, string FindSizeAlphabet);
+        Task<DmDownloadingStatus> GetFirst();
+        Task<DmDownloadingStatus> CreateStatusIfNull(int CurrentAmount, int TotalAmount);
     }
 }

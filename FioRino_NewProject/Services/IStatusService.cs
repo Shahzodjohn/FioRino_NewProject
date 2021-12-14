@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
 {
-    public interface IParsingProductsService
+    public interface IStatusService
     {
-        Task<string> ParsingProducts(string cancelToken);
+        Task UpdateStatus();
     }
 }
