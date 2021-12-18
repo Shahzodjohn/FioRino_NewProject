@@ -10,5 +10,6 @@ namespace FioRino_NewProject.Repositories
     {
         Task<DmDownloadingStatus> GetFirst();
         Task<DmDownloadingStatus> CreateStatusIfNull(int CurrentAmount, int TotalAmount);
+        Task<DmDownloadingStatus> OriginalValues();
     }
 }

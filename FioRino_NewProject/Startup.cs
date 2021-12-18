@@ -55,13 +55,12 @@ namespace FioRino_NewProject
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUniqueProductsRepository, UniqueProductsRepository>();
             services.AddScoped<ISkuRepository, SkuRepository>();
-            services.AddScoped<IParsingProductsService, ParsingProductsService>();
+            services.AddScoped<ParsingProductsService>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddTransient<IUserAccessRepository, UserAccessRepository>();
             services.AddTransient<IAuthorizationHandler, AccessAttribute.AccessHandler>();
-            
 
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.AddTransient<IMailService, MailService>();

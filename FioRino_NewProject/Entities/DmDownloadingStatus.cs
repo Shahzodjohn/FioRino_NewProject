@@ -12,5 +12,6 @@ namespace FioRino_NewProject.Entities
         public int? CurrentAmount { get; set; }
         public DateTime? SuccessDate { get; set; }
         public string Status { get; set; }
+        public bool? PocessIsKilled { get; set; }
     }
 }

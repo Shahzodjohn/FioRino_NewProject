@@ -1,5 +1,8 @@
-﻿using FioRino_NewProject.Repositories;
+﻿using FioRino_NewProject.Data;
+using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
+using FioRino_NewProject.Settings;
+using Microsoft.EntityFrameworkCore;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -22,8 +25,10 @@ namespace FioRino_NewProject.Services
         private readonly ISkuRepository _skuRepository;
         private readonly ISaveRepository _save;
         private readonly IStatusRepository _statusRepository;
+        private readonly FioRinoBaseContext _context;
 
-        public ParsingProductsService(ICategoryRepository categoryRepository, IUniqueProductsRepository uniqueProductRepository, ISizeRepository sizeRepository, ISkuRepository skuRepository, ISaveRepository save, IProductService pService, IProductRepository productRepository, IStatusRepository statusRepository)
+
+        public ParsingProductsService(ICategoryRepository categoryRepository, IUniqueProductsRepository uniqueProductRepository, ISizeRepository sizeRepository, ISkuRepository skuRepository, ISaveRepository save, IProductService pService, IProductRepository productRepository, IStatusRepository statusRepository, FioRinoBaseContext context)
         {
             _categoryRepository = categoryRepository;
             _uniqueProductRepository = uniqueProductRepository;
@@ -33,14 +38,34 @@ namespace FioRino_NewProject.Services
             _pService = pService;
             _productRepository = productRepository;
             _statusRepository = statusRepository;
+            _context = context;
+        }
+        public async Task<Response> Cancel()
+        {
+            var loadingStatus = await _statusRepository.GetFirst();
+            loadingStatus.Status = "STOPPED";
+            loadingStatus.PocessIsKilled = true;
+            loadingStatus.CurrentAmount = 0;
+            loadingStatus.TotalAmount = 0;
+            await _save.SaveAsync();
+            return new Response { Status = "Error", Message = "Double click is not allowed!" };
         }
 
-        
-        
-        public async Task<string> ParsingProducts(string CancelToken)
+        public async Task<Response> ParsingProducts()
         {
-            CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-            CancellationToken token = cancelTokenSource.Token;
+            var loadingStatus = await _statusRepository.GetFirst();
+            if (loadingStatus.Status == "LOADING")
+            {
+                return new Response { Status = "Error", Message = "Double click is not allowed!" };
+            }
+            loadingStatus.Status = "LOADING";
+            await _save.SaveAsync();
+            await Parser();
+            return new Response { Status = "Ok", Message = "Successfully stopped!" };
+        }
+
+        public async Task Parser()
+        {
             using var client = new HttpClient();
             HtmlAgilityPack.HtmlDocument web = new HtmlAgilityPack.HtmlDocument();
             var UrlAddressClient = new RestClient("https://mojegs1.pl/logowanie");
@@ -71,15 +96,12 @@ namespace FioRino_NewProject.Services
             var laravelsession = PostResponse.Cookies[1].Value;
             var rs = PostResponse.Headers[4].Value;
             web.LoadHtml(PostResponse.Content);
-            
+
             var linkCount = 1;
-            for (int i = 0; ;i++)
+            for (int i = 0; ; i++)
             {
-                if (CancelToken == "STOP")
-                {
-                    cancelTokenSource.Cancel();
-                    if (token.IsCancellationRequested){System.Diagnostics.Process.GetCurrentProcess().Kill();}
-                }
+                var originalEntity = await _statusRepository.OriginalValues();
+                
                 var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/{linkCount}?searchText=&isPublic=&amountPerPage=1");
                 //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=50&searchText=-6&isPublic=");
                 //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty");
@@ -88,7 +110,6 @@ namespace FioRino_NewProject.Services
                 RestRequestNew.AddHeader("Cookie", $"XSRF-TOKEN={xrf}; laravel_session={laravelsession}");
                 IRestResponse rsponseCookie = RstClientNew.Execute(RestRequestNew);
                 web.LoadHtml(rsponseCookie.Content);
-
                 var pageFind = "//div[@class='form-group']";
                 var page = web.DocumentNode.SelectNodes(pageFind).ToList();
 
@@ -99,6 +120,16 @@ namespace FioRino_NewProject.Services
                 var TotalAmountString = page[0].InnerHtml.Replace(")\n                            ", "").Split(" ").Last();
                 Int32.TryParse(TotalAmountString, out TotalAmount);
                 var LoadingStatus = await _statusRepository.CreateStatusIfNull(CurrentAmount, TotalAmount);
+                if (originalEntity.PocessIsKilled == true)
+                {
+                    var updating = await _statusRepository.GetFirst();
+                    updating.PocessIsKilled = false;
+                    await _save.SaveAsync();
+                    return;
+                }
+
+
+
                 var skuN = rsponseCookie.Content.Contains("https://mojegs1.pl/moje-produkty/edycja/");
                 foreach (var cookie in PostResponse.Cookies)
                 {
@@ -123,12 +154,11 @@ namespace FioRino_NewProject.Services
                                           isFasterCategory ? items[1].InnerText.Trim().Replace("FASTER", " ") :
                                           items[1].InnerText.Trim();
                         var ProductFullName = items[1].InnerText.Trim();
-                        //string ProdName;
                         string output;
-                        var ProdName = productName.Contains("rozm.") ? productName.Replace("rozm.", " ") : productName.Replace("r.","");
+                        var ProdName = productName.Contains("rozm.") ? productName.Replace("rozm.", " ") : productName.Replace("r.", "");
                         if (!ProdName.Contains("cm") && !ProdName.Contains("MET") && !productName.Contains("-"))
                         {
-                             output = Regex.Replace(ProdName, @"[\0-9]", " ");
+                            output = Regex.Replace(ProdName, @"[\0-9]", " ");
                         }
                         else
                         {
@@ -136,7 +166,6 @@ namespace FioRino_NewProject.Services
                         }
                         var categoryId = (isClassicCategory ? classicCategory.Id :
                                 (isFasterCategory ? fasterCategory.Id : nocategory.Id));
-                        
                         #region EANCodesDonwloading
                         //foreach (var gtinImages in gting)
                         //{
@@ -166,12 +195,12 @@ namespace FioRino_NewProject.Services
                              MatchingProducts.Split(" ").Last() == "L" ||
                              MatchingProducts.Split(" ").Last() == "XL" ||
                              MatchingProducts.Split(" ").Last() == "XS" ||
-                             MatchingProducts.Split(" ").Last() == "2XL") 
-                        { 
-                            FindSizeAlphabet = MatchingProducts.Split(" ").Last(); 
+                             MatchingProducts.Split(" ").Last() == "2XL")
+                        {
+                            FindSizeAlphabet = MatchingProducts.Split(" ").Last();
                             var SizeAlphabet = MatchingProducts.LastIndexOf(" ");
                             if (SizeAlphabet > 0)
-                            MatchingProducts = MatchingProducts.Substring(0, SizeAlphabet);
+                                MatchingProducts = MatchingProducts.Substring(0, SizeAlphabet);
                         }
                         else
                         {
@@ -183,10 +212,10 @@ namespace FioRino_NewProject.Services
                             var resultString = Regex.Match(splitLastIndex, @"\d+").Value;
                             Int32.TryParse(resultString, out SizeNum);
                         }
-                        //
+
                         var findSize = await _sizeRepository.FindSizeByNumber(SizeNum);
                         var sizeId = await _sizeRepository.CreateSizeIfNull(findSize, SizeNum, FindSizeAlphabet);
-                        
+
                         var skuTaking = "//div/table/tbody/tr//td/a[@href]";
                         var webload = web.DocumentNode.SelectNodes(skuTaking).ToList();
                         var address = webload[0].OuterHtml;
@@ -219,7 +248,7 @@ namespace FioRino_NewProject.Services
                             if (regexing != "")
                             {
                                 var find = await _skuRepository.FindSkuBySkuCodeName(regexing);
-                                 var skuCodeId = await _skuRepository.InsertingSkuIFNull(find,regexing);
+                                var skuCodeId = await _skuRepository.InsertingSkuIFNull(find, regexing);
                             }
                         }
                         var AddProd = await _pService.InsertDmProduct(MatchingProducts, categoryId, gtin, ProductId);
@@ -229,28 +258,25 @@ namespace FioRino_NewProject.Services
                             await _save.SaveAsync();
                         }
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    if(LoadingStatus.CurrentAmount == LoadingStatus.TotalAmount)
+                    if (LoadingStatus.CurrentAmount == LoadingStatus.TotalAmount)
                     {
                         LoadingStatus.Status = "SUCCESS";
                         LoadingStatus.SuccessDate = DateTime.Now;
                         await _save.SaveAsync();
                     }
-                    else if(LoadingStatus.CurrentAmount != LoadingStatus.TotalAmount)
+                    else if (LoadingStatus.CurrentAmount != LoadingStatus.TotalAmount)
                     {
                         LoadingStatus.Status = "ERROR";
                         LoadingStatus.SuccessDate = DateTime.Now;
                         await _save.SaveAsync();
                     }
-                    return ex.InnerException.Message.ToString();
+                    //return ex.InnerException.Message.ToString();
                 }
-                
-                
+
             }
-            
         }
     }
 }

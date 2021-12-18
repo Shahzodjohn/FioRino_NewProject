@@ -1,11 +1,13 @@
 ﻿using FioRino_NewProject.Model;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
+using FioRino_NewProject.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -14,20 +16,31 @@ namespace FioRino_NewProject.Controllers
     [ApiController]
     public class ParsingProductsController : ControllerBase
     {
-        private readonly IParsingProductsService _parsingProductsService;
+        private readonly ParsingProductsService _parsingProductsService;
 
-        public ParsingProductsController(IParsingProductsService parsingProductsService)
+        public ParsingProductsController(ParsingProductsService parsingProductsService)
         {
             _parsingProductsService = parsingProductsService;
         }
         [HttpGet]
-        public async Task<IActionResult> ParsingProducts([FromQuery] string cancelToken)
+        public async Task<IActionResult> ParsingProducts()
         {
-            await _parsingProductsService.ParsingProducts(cancelToken);
+            var message = await _parsingProductsService.ParsingProducts();
+            if (message.Status == "Ok")
+            {
+                return Ok(message.Message);
+            }
+            else
+                return BadRequest(message.Message);
+            //return Ok();
+        }
+        [HttpPut("StopParsing")]
+        public async Task<IActionResult> StopParsing()
+        {
+            await _parsingProductsService.Cancel();
             return Ok();
         }
-        // EXPOSE_dm_DownloadingStatus_LoadingProcess
-
+        
         [HttpPost("LoadingProcess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_DownloadingStatus_LoadingProcessResult>>> PostDmDownloadingStatusLoadingProcess()
         {

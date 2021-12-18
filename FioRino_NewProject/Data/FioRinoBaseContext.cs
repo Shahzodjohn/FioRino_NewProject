@@ -119,7 +119,7 @@ namespace FioRino_NewProject.Data
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.SuccessDate).HasColumnType("date");
+                entity.Property(e => e.SuccessDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<DmFileWz>(entity =>

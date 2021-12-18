@@ -17,6 +17,12 @@ namespace FioRino_NewProject.Repositories
             _context = context;
         }
 
+        public async Task<DmDownloadingStatus> OriginalValues()
+        {
+            var originalEntity = await _context.DmDownloadingStatuses.AsNoTracking().FirstOrDefaultAsync();
+            return originalEntity;
+        }
+
         public async Task<DmDownloadingStatus> CreateStatusIfNull(int CurrentAmount, int TotalAmount)
         {
             var status = await _context.DmDownloadingStatuses.FirstOrDefaultAsync();
@@ -25,8 +31,8 @@ namespace FioRino_NewProject.Repositories
                 var insert = new DmDownloadingStatus
                 {
                      CurrentAmount = CurrentAmount,
-                      TotalAmount = TotalAmount,
-                       Status = "Loading"
+                      TotalAmount = TotalAmount
+                       //Status = "LOADING"
                 };
                 await _context.DmDownloadingStatuses.AddAsync(insert);
                 await _context.SaveChangesAsync();
@@ -36,7 +42,7 @@ namespace FioRino_NewProject.Repositories
             {
                 status.CurrentAmount = CurrentAmount;
                 status.TotalAmount = TotalAmount;
-                status.Status = "Loading";
+                //status.Status = "LOADING";
                 await _context.SaveChangesAsync();
             }
             return status;
