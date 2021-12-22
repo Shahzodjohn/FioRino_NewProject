@@ -2,6 +2,7 @@
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,8 +54,9 @@ namespace FioRino_NewProject.Services
                 var findDmOrderProducts = await _opRepository.GetOrderProductListByGtinAsync(item.Gtin);
                 foreach (var orderProducts in findDmOrderProducts)
                 {
+                    var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == orderProducts.OrderId);
                     var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
-                    if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount && orderProducts.OrderId != dmOrders.Id && orderProducts.ProductStatusesId != 2)
+                    if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount && orderProducts.OrderId != dmOrders.Id && orderProducts.ProductStatusesId != 2 && Order.IsInArchievum != true)
                     {
                         orderProducts.ProductStatusesId = 2;
                         findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;

@@ -44,9 +44,8 @@ namespace FioRino_NewProject.Services
         {
             var loadingStatus = await _statusRepository.GetFirst();
             loadingStatus.Status = "STOPPED";
-            loadingStatus.PocessIsKilled = true;
-            loadingStatus.CurrentAmount = 0;
-            loadingStatus.TotalAmount = 0;
+            //loadingStatus.PocessIsKilled = true;
+            
             await _save.SaveAsync();
             return new Response { Status = "Error", Message = "Double click is not allowed!" };
         }
@@ -98,13 +97,13 @@ namespace FioRino_NewProject.Services
             web.LoadHtml(PostResponse.Content);
 
             var linkCount = 1;
-            for (int i = 0; ; i++)
+            for (int i = 0; ;i++)
             {
                 var originalEntity = await _statusRepository.OriginalValues();
                 
                 var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/{linkCount}?searchText=&isPublic=&amountPerPage=1");
-                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=50&searchText=-6&isPublic=");
-                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty");
+                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=50&searchText=5904083497274&isPublic=");
+                //var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty/sortowanie/nazwa/kierunek/rosnaco/1?amountPerPage=1&searchText=-6&isPublic=");
                 RstClientNew.Timeout = -1;
                 var RestRequestNew = new RestRequest(Method.GET);
                 RestRequestNew.AddHeader("Cookie", $"XSRF-TOKEN={xrf}; laravel_session={laravelsession}");
@@ -120,14 +119,23 @@ namespace FioRino_NewProject.Services
                 var TotalAmountString = page[0].InnerHtml.Replace(")\n                            ", "").Split(" ").Last();
                 Int32.TryParse(TotalAmountString, out TotalAmount);
                 var LoadingStatus = await _statusRepository.CreateStatusIfNull(CurrentAmount, TotalAmount);
-                if (originalEntity.PocessIsKilled == true)
+                if (originalEntity.Status == "STOPPED")
                 {
                     var updating = await _statusRepository.GetFirst();
-                    updating.PocessIsKilled = false;
-                    await _save.SaveAsync();
+                    updating.CurrentAmount = 0;
+                    //updating.PocessIsKilled = false;
+                    updating.TotalAmount = 0;
+                    updating.Status = originalEntity.Status;
+                    await _context.SaveChangesAsync();
                     return;
                 }
-
+                if (CurrentAmount == TotalAmount)
+                {
+                    var statusSelect = await _statusRepository.GetFirst();
+                    statusSelect.Status = "SUCCESS";
+                    statusSelect.SuccessDate = DateTime.Now;
+                    await _save.SaveAsync();
+                }
 
 
                 var skuN = rsponseCookie.Content.Contains("https://mojegs1.pl/moje-produkty/edycja/");
@@ -155,8 +163,12 @@ namespace FioRino_NewProject.Services
                                           items[1].InnerText.Trim();
                         var ProductFullName = items[1].InnerText.Trim();
                         string output;
+                        
                         var ProdName = productName.Contains("rozm.") ? productName.Replace("rozm.", " ") : productName.Replace("r.", "");
-                        if (!ProdName.Contains("cm") && !ProdName.Contains("MET") && !productName.Contains("-"))
+                        //ProdName = Regex.Replace(productName, @"[\0-9]", " ");
+                        var ProdNameWithUpperSlash = ProdName.Split(" ").Last().Contains("-");
+                       
+                        if (!ProdName.Contains("cm") && !ProdName.Contains("MET") && !ProdNameWithUpperSlash == true)
                         {
                             output = Regex.Replace(ProdName, @"[\0-9]", " ");
                         }
@@ -257,17 +269,13 @@ namespace FioRino_NewProject.Services
                             AddProd.SizeId = sizeId;
                             await _save.SaveAsync();
                         }
+                        
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (LoadingStatus.CurrentAmount == LoadingStatus.TotalAmount)
-                    {
-                        LoadingStatus.Status = "SUCCESS";
-                        LoadingStatus.SuccessDate = DateTime.Now;
-                        await _save.SaveAsync();
-                    }
-                    else if (LoadingStatus.CurrentAmount != LoadingStatus.TotalAmount)
+                    
+                    if (LoadingStatus.CurrentAmount != LoadingStatus.TotalAmount)
                     {
                         LoadingStatus.Status = "ERROR";
                         LoadingStatus.SuccessDate = DateTime.Now;

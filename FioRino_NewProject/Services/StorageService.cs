@@ -61,9 +61,11 @@ namespace FioRino_NewProject.Services
             //var findFromStan = await _storageReposioty.FindFromStorageByGtinAsync(Gtin);
             findFromStan.AmountLeft = parameters.Amount;
             await _context.SaveChangesAsync();
+            
             foreach (var item in OrderProductId)
             {
-                if (findFromStan.IsBlocked != true)
+                var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == item.OrderId);
+                if (Order.IsInArchievum != true)
                 {
                     if (findFromStan.AmountLeft > item.Amount)
                     {
@@ -75,7 +77,7 @@ namespace FioRino_NewProject.Services
                         item.ProductStatusesId = 1;
                     }
                 }
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
             }
             return findFromStan;
         }

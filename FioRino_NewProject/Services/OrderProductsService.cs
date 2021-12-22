@@ -54,12 +54,16 @@ namespace FioRino_NewProject.Services
             var findDmOrderProducts = await _storageRepository.GetOrderProductListAsync(Gtin);
             foreach (var orderProducts in findDmOrderProducts)
             {
-                var findStorage = await _context.DmStorages.FirstOrDefaultAsync(x => x.Gtin == Gtin);
-                if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount )
+                var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == orderProducts.OrderId);
+                if(Order.IsInArchievum != true)
                 {
-                    orderProducts.ProductStatusesId = 2;
-                    findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
-                    await _context.SaveChangesAsync();
+                    var findStorage = await _context.DmStorages.FirstOrDefaultAsync(x => x.Gtin == Gtin);
+                    if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount)
+                    {
+                        orderProducts.ProductStatusesId = 2;
+                        findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
+                        await _context.SaveChangesAsync();
+                    }
                 }
             }
 
@@ -80,20 +84,21 @@ namespace FioRino_NewProject.Services
         {
             foreach (var item in dmOrderProduct)
             {
+                var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == item.OrderId);
                 var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin); 
                 if (findStorage != null)
                 {
                     if (findStorage.AmountLeft >= item.Amount)
                     {
-                        if (item.ProductStatusesId == 2 || item.ProductStatusesId == 1)
-                        {
-                            if (item.ProductStatusesId == 1 || OpId == item.Id)
+                        //if (item.ProductStatusesId == 2 || item.ProductStatusesId == 1)
+                        //{
+                            if (item.ProductStatusesId == 1 && Order.IsInArchievum != true|| OpId == item.Id && Order.IsInArchievum != true)
                             {
                                 item.ProductStatusesId = 2;
                                 findStorage.AmountLeft = findStorage.AmountLeft - item.Amount;
                                 await _context.SaveChangesAsync();
                             }
-                        }
+                        //}
                     }
                     else if(OpId == item.Id)
                     {

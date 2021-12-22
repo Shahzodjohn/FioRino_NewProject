@@ -121,7 +121,6 @@ namespace FioRino_NewProject.Controllers
         public async Task<IActionResult> DeleteDmOrders(int id)
         {
             await _oService.DeleteDmOrders(id);
-            await _save.SaveAsync();
             return Ok(new Response { Status = "Ok", Message = "Success!" });
         }
         [HttpPost("CreateOrder")]
