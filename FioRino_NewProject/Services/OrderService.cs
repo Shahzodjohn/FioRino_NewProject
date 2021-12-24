@@ -1,11 +1,14 @@
 ﻿using FioRino_NewProject.Data;
+using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -25,50 +28,57 @@ namespace FioRino_NewProject.Services
             _opRepository = opRepository;
         }
 
-        public async Task<Response> DeleteDmOrders(int Id)
+        
+        public async Task<Response> DeleteDmOrders(int Id, UserDTO UserInfo)
         {
             var dmOrders = await _oRepository.FindOrder(Id);
             
-            var findProduct = await _opRepository.GetOrderProductListByOrderIdAsync(Id);
-            if(findProduct.Count == 0)
+            if(UserInfo.RoleName == "Admin")
             {
-                await _oRepository.DeleteOrder(dmOrders.Id);
-                return new Response();
-            }
-            foreach (var item in findProduct)
-            {
-                foreach (var items in findProduct)
+                var findProduct = await _opRepository.GetOrderProductListByOrderIdAsync(Id);
+                if (findProduct.Count == 0)
                 {
-                    var findStorage = await _storageRepository.FindFromStorageByGtinAsync(items.Gtin);
-                    if (findStorage != null && items.ProductStatusesId == 2 || items.ProductStatusesId == 1 || items.ProductStatusesId == 4)
+                    await _oRepository.DeleteOrder(dmOrders.Id);
+                    return new Response();
+                }
+                foreach (var item in findProduct)
+                {
+                    foreach (var items in findProduct)
                     {
-                        if (items.ProductStatusesId != 1)
+                        var findStorage = await _storageRepository.FindFromStorageByGtinAsync(items.Gtin);
+                        if (findStorage != null && items.ProductStatusesId == 2 || items.ProductStatusesId == 1 || items.ProductStatusesId == 4)
                         {
-                            findStorage.AmountLeft = findStorage.AmountLeft + items.Amount;
+                            if (items.ProductStatusesId != 1)
+                            {
+                                findStorage.AmountLeft = findStorage.AmountLeft + items.Amount;
+                            }
+
+                            _context.DmOrderProducts.RemoveRange(items);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    var findDmOrderProducts = await _opRepository.GetOrderProductListByGtinAsync(item.Gtin);
+                    foreach (var orderProducts in findDmOrderProducts)
+                    {
+                        var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == orderProducts.OrderId);
+                        var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
+                        if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount && orderProducts.OrderId != dmOrders.Id && orderProducts.ProductStatusesId != 2 && Order.IsInArchievum != true)
+                        {
+                            orderProducts.ProductStatusesId = 2;
+                            findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
+                            await _context.SaveChangesAsync();
                         }
 
-                        _context.DmOrderProducts.RemoveRange(items);
-                        await _context.SaveChangesAsync();
                     }
-                }
-                var findDmOrderProducts = await _opRepository.GetOrderProductListByGtinAsync(item.Gtin);
-                foreach (var orderProducts in findDmOrderProducts)
-                {
-                    var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == orderProducts.OrderId);
-                    var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
-                    if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount && orderProducts.OrderId != dmOrders.Id && orderProducts.ProductStatusesId != 2 && Order.IsInArchievum != true)
-                    {
-                        orderProducts.ProductStatusesId = 2;
-                        findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
-                        await _context.SaveChangesAsync();
-                    }
-                    
-                }
-                
-                _context.DmOrders.Remove(dmOrders);
-                await _context.SaveChangesAsync();
-                return new Response { Status = "Ok", Message = "Success!" };
+
+                    _context.DmOrders.Remove(dmOrders);
+                    await _context.SaveChangesAsync();
+                    return new Response { Status = "Ok", Message = "Success!" };
+                } 
             }
+            else
+                return new Response { Status = "Error", Message = "Nie masz prawa do usunięcia pliku WZ!" };
+
             return new Response { Status = "Ok", Message = "Success!" };
         }
 

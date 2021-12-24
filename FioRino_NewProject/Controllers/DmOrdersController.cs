@@ -4,12 +4,14 @@ using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -23,14 +25,18 @@ namespace FioRino_NewProject.Controllers
         private readonly ISaveRepository _save;
         private readonly IOrderProductsService _orderProductService;
         private readonly IOrderService _oService;
+        private readonly IUserRepository _repository;
+        private readonly IRegisterService _service;
 
-        public DmOrdersController(IOrderRepository oRepository, ISaveRepository save, IOrderService oService, IOrderProductsService orderProductService, IUserRepository userRepository)
+        public DmOrdersController(IOrderRepository oRepository, ISaveRepository save, IOrderService oService, IOrderProductsService orderProductService, IUserRepository userRepository, IUserRepository repository, IRegisterService service)
         {
             _orderRepository = oRepository;
             _save = save;
             _oService = oService;
             _orderProductService = orderProductService;
             _userRepository = userRepository;
+            _repository = repository;
+            _service = service;
         }
 
         [HttpPost("Amount")]
@@ -118,10 +124,21 @@ namespace FioRino_NewProject.Controllers
             }
         }
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> DeleteDmOrders(int id)
         {
-            await _oService.DeleteDmOrders(id);
-            return Ok(new Response { Status = "Ok", Message = "Success!" });
+            var claim = User.Identity as ClaimsIdentity;
+            var currentUser = await _repository.GetUser(claim.GetUserId<int>());
+            var UserInfo = await _service.CurrentUser(currentUser);
+            
+            var message = await _oService.DeleteDmOrders(id, UserInfo);
+            if (message.Status == "Ok")
+            {
+                return Ok(new Response { Status = "Ok", Message = "Success!" });
+            }
+            else
+                return BadRequest(new Response { Status = "Error", Message = "Nie masz prawa do usunięcia pliku WZ!" });
+            
         }
         [HttpPost("CreateOrder")]
         public async Task<ActionResult> PostDmOrdersCreateOrder([FromBody] CreateOrderParams parameters)

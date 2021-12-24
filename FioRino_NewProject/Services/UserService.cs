@@ -85,5 +85,6 @@ namespace FioRino_NewProject.Services
             _context.DmUsers.Remove(User);
             await _context.SaveChangesAsync();
         }
+
     }
 }

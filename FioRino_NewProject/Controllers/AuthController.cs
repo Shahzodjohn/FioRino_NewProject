@@ -156,7 +156,7 @@ namespace FioRino_NewProject.Controllers
                 User = UserInfo,
                 IsAuthenticated = user
             });
-        }
+        }   
         [HttpPost("VarifyUser")]
         public async Task<ActionResult> VerifyUser(RandomNumberDTO dto)
         {
