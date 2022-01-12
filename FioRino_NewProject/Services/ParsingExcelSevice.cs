@@ -2,7 +2,6 @@
 using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,18 +18,18 @@ namespace FioRino_NewProject.Services
 
         public Task<DmCategory> ClassicCategory()
         {
-           return _context.DmCategories.FirstOrDefaultAsync(x => x.CategoryName == "Classic");
+            return _context.DmCategories.FirstOrDefaultAsync(x => x.CategoryName == "Classic");
         }
         public Task<DmCategory> FasterCategory()
         {
             return _context.DmCategories.FirstOrDefaultAsync(x => x.CategoryName == "Faster");
         }
 
-        
+
 
         public async Task<int> CreateNewOrder(int Id)
         {
-            var currentUser = await _context.DmUsers.FirstOrDefaultAsync(x=>x.Id == Id);
+            var currentUser = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id == Id);
             var CreateOrder = new DmOrder
             {
                 CreatedAt = DateTime.Today,
@@ -62,7 +61,7 @@ namespace FioRino_NewProject.Services
             await _context.SaveChangesAsync();
             return insertSizes.Id;
         }
-        public async Task UpdateOrder(int amount,int OrderId)
+        public async Task UpdateOrder(int amount, int OrderId)
         {
             var update = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == OrderId);
             update.Amount = amount;
@@ -141,9 +140,9 @@ namespace FioRino_NewProject.Services
 
         public async Task<int> InsertProductsToDmProducts(string ProductName, int uniqueproductId, int categoryId, int SizeId, string GtinPaging)
         {
-            var findProduct = await _context.DmProducts.FirstOrDefaultAsync(x=>x.Gtin == GtinPaging);
+            var findProduct = await _context.DmProducts.FirstOrDefaultAsync(x => x.Gtin == GtinPaging);
             int ProductId = 0;
-            if(findProduct == null)
+            if (findProduct == null)
             {
                 var insertProds = new DmProduct
                 {
@@ -161,8 +160,8 @@ namespace FioRino_NewProject.Services
             {
                 return ProductId = findProduct.Id;
             }
-            
-            
+
+
         }
 
         public async Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging)

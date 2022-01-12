@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FioRino_NewProject.DataTransferOrigins
+﻿namespace FioRino_NewProject.DataTransferOrigins
 {
     public class RegisterDTO
     {

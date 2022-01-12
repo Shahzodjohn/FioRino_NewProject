@@ -2,7 +2,6 @@
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Responses;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +19,7 @@ namespace FioRino_NewProject.Repositories
 
         public void Delete(DmOrderProduct dmOrderProduct)
         {
-             _context.DmOrderProducts.Remove(dmOrderProduct);
+            _context.DmOrderProducts.Remove(dmOrderProduct);
         }
 
         public async Task<DmOrderProduct> GetOrderProductAsync(int OrderProductId)

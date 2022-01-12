@@ -1,7 +1,6 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -32,6 +31,6 @@ namespace FioRino_NewProject.Repositories
         {
             var findFromStan = await _context.DmOrderProducts.Where(x => x.Gtin == Gtin).ToListAsync();
             return findFromStan;
-        }   
+        }
     }
 }

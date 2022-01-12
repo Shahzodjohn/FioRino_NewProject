@@ -1,9 +1,6 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -26,7 +23,7 @@ namespace FioRino_NewProject.Services
 
         public async Task<DmOrder> FindOrder(int OrderId)
         {
-            var FindOrder = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == OrderId);
+            var FindOrder = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == OrderId);
             return FindOrder;
         }
     }

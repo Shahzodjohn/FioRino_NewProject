@@ -6,7 +6,6 @@ using FioRino_NewProject.Responses;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -33,7 +32,7 @@ namespace FioRino_NewProject.Services
             var findDmOrderProduct = await _context.DmOrderProducts.FirstOrDefaultAsync(x => x.Id == OrderProductId);
             return findDmOrderProduct;
         }
-        public async Task UpdateAmountInStorage(string Gtin,int Amount, int OrderProductId)
+        public async Task UpdateAmountInStorage(string Gtin, int Amount, int OrderProductId)
         {
             var findOp = await _opRepository.GetOrderProductAsync(OrderProductId);
             var findFromStan = await _context.DmStorages.FirstOrDefaultAsync(x => x.Gtin == Gtin);
@@ -54,8 +53,8 @@ namespace FioRino_NewProject.Services
             var findDmOrderProducts = await _storageRepository.GetOrderProductListAsync(Gtin);
             foreach (var orderProducts in findDmOrderProducts)
             {
-                var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == orderProducts.OrderId);
-                if(Order.IsInArchievum != true)
+                var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == orderProducts.OrderId);
+                if (Order.IsInArchievum != true)
                 {
                     var findStorage = await _context.DmStorages.FirstOrDefaultAsync(x => x.Gtin == Gtin);
                     if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount)
@@ -84,28 +83,28 @@ namespace FioRino_NewProject.Services
         {
             foreach (var item in dmOrderProduct)
             {
-                var Order = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == item.OrderId);
-                var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin); 
+                var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == item.OrderId);
+                var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
                 if (findStorage != null)
                 {
                     if (findStorage.AmountLeft >= item.Amount)
                     {
                         //if (item.ProductStatusesId == 2 || item.ProductStatusesId == 1)
                         //{
-                            if (item.ProductStatusesId == 1 && Order.IsInArchievum != true|| OpId == item.Id && Order.IsInArchievum != true)
-                            {
-                                item.ProductStatusesId = 2;
-                                findStorage.AmountLeft = findStorage.AmountLeft - item.Amount;
-                                await _context.SaveChangesAsync();
-                            }
+                        if (item.ProductStatusesId == 1 && Order.IsInArchievum != true || OpId == item.Id && Order.IsInArchievum != true)
+                        {
+                            item.ProductStatusesId = 2;
+                            findStorage.AmountLeft = findStorage.AmountLeft - item.Amount;
+                            await _context.SaveChangesAsync();
+                        }
                         //}
                     }
-                    else if(OpId == item.Id)
+                    else if (OpId == item.Id)
                     {
                         item.ProductStatusesId = 1;
                         await _context.SaveChangesAsync();
                     }
-  
+
                 }
             }
         }
@@ -115,7 +114,7 @@ namespace FioRino_NewProject.Services
             foreach (var item in findOrderProduct)
             {
                 var findStorage = await _context.DmStorages.FirstOrDefaultAsync(x => x.Gtin == item.Gtin);
-                if(findStorage != null)
+                if (findStorage != null)
                 {
                     findStorage.Amount = findStorage.Amount - item.Amount;
                 }

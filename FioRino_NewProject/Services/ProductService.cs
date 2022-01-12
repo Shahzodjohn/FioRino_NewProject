@@ -2,9 +2,6 @@
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -27,7 +24,7 @@ namespace FioRino_NewProject.Services
         public async Task AddingProductsToStorage(string GTIN, int SkuCodeId, int Amount, int ProductId, int SizeId, int CategoryId)
         {
             var findProductInStorage = await _storageReposiotory.FindFromStorageByGtinAsync(GTIN);
-            if(findProductInStorage == null)
+            if (findProductInStorage == null)
             {
                 var AddingProductsToStorage = new DmStorage
                 {
@@ -40,14 +37,14 @@ namespace FioRino_NewProject.Services
                     CategoryId = CategoryId
                 };
                 _context.DmStorages.Add(AddingProductsToStorage);
-                await _context.SaveChangesAsync();  
+                await _context.SaveChangesAsync();
             }
             else
             {
                 findProductInStorage.Amount = findProductInStorage.Amount + Amount;
                 findProductInStorage.AmountLeft = findProductInStorage.AmountLeft + Amount;
             }
-            
+
             await _context.SaveChangesAsync();
         }
 
@@ -57,11 +54,11 @@ namespace FioRino_NewProject.Services
             return findProduct;
         }
 
-        public async Task SettingUpReceiver(DmOrder dmOrder,int CurrentUserId, string SenderName)
+        public async Task SettingUpReceiver(DmOrder dmOrder, int CurrentUserId, string SenderName)
         {
-            var User = await _context.DmUsers.FirstOrDefaultAsync(x=>x.FirstName + " " + x.LastName == SenderName);
+            var User = await _context.DmUsers.FirstOrDefaultAsync(x => x.FirstName + " " + x.LastName == SenderName);
             var currentUser = await _userRepository.GetUser(CurrentUserId);
-            var findOrder = await _context.DmOrders.FirstOrDefaultAsync(x=>x.Id == dmOrder.Id);
+            var findOrder = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == dmOrder.Id);
             if (findOrder.ReceiverName == null && User != currentUser && dmOrder.IsInMagazyn == true)
             {
                 dmOrder.ReceiverName = currentUser.FirstName + " " + currentUser.LastName;
@@ -72,7 +69,7 @@ namespace FioRino_NewProject.Services
         public async Task<DmProduct> InsertDmProduct(string ProductName, int CategoryId, string Gtin, int UniqueProductId)
         {
             var FindProduct = await _productReposiotory.FindProductByGtinAsync(Gtin);
-            if(FindProduct == null)
+            if (FindProduct == null)
             {
                 var AddProd = new DmProduct
                 {
@@ -86,7 +83,7 @@ namespace FioRino_NewProject.Services
                 await _context.SaveChangesAsync();
                 return AddProd;
             }
-            
+
             return FindProduct;
         }
     }

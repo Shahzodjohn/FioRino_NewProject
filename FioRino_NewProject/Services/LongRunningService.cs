@@ -1,12 +1,6 @@
 ﻿using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Settings;
 using Microsoft.Extensions.Hosting;
-using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,6 +46,6 @@ namespace FioRino_NewProject.Services
             }
         }
 
-       
+
     }
 }

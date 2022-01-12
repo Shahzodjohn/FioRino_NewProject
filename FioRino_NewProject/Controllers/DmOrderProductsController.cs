@@ -3,11 +3,8 @@ using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -69,7 +66,7 @@ namespace FioRino_NewProject.Controllers
                     findOrder.Amount = parameters.Amount;
                     var findProduct = await _productService.FindProductAsync(parameters.ProductId);
                     var findFromStan = await _storageRepository.FindFromStorageByGtinAsync(findProduct.Gtin);
-                    if(findFromStan != null)
+                    if (findFromStan != null)
                     {
                         await _opService.UpdateAmountInStorage(findFromStan.Gtin, parameters.Amount, findDmOrderProduct.Id);
                     }
@@ -140,7 +137,7 @@ namespace FioRino_NewProject.Controllers
             }
             var findProduct = await _opService.FindOrderProduct(dTO.Id);
             await _opService.ReturningAmountToStorageBack(findProduct.ProductStatusesId ?? 0, findProduct.Gtin, findProduct.Amount ?? 0, dTO.Amount ?? 0);
-            
+
             var findOrderProduct = await _opRepository.GetOrderProductListByGtinAsync(findProduct.Gtin);
             findProduct.ProductId = SelectingcurrentProduct.Id;
             findProduct.Gtin = SelectingcurrentProduct.Gtin;
@@ -156,7 +153,7 @@ namespace FioRino_NewProject.Controllers
                     findProduct.Amount = dTO.Amount;
                     await _opService.MinusingBackAfterReturningAmount(findOrderProduct, dTO.Id);
                 }
-                else 
+                else
                 {
                     if (findProduct.ProductStatusesId == 1)
                     {
@@ -164,7 +161,7 @@ namespace FioRino_NewProject.Controllers
                         await _save.SaveAsync();
                         return Ok(new Response { Status = "OK", Message = $"Numer zamówienia {findProduct.Id} został pomyślnie zaktualizowany!" });
                     }
-                        
+
                     return BadRequest(new Response { Status = "Error", Message = "Wybierz odpowiednią ilość!" });
                 }
             }

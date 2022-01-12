@@ -1,10 +1,6 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.DataTransferOrigins;
 using FioRino_NewProject.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -22,4 +18,3 @@ namespace FioRino_NewProject.Services
         Task<DmUser> ResetPassword(NewPasswordDTO dto);
     }
 }
-    

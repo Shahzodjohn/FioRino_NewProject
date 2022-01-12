@@ -2,15 +2,15 @@
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Settings;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
 
 namespace FioRino_NewProject.Services
 {
@@ -29,7 +29,7 @@ namespace FioRino_NewProject.Services
         {
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_settings.Mail);
-            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail)); 
+            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
 
             var builder = new BodyBuilder();
             #region

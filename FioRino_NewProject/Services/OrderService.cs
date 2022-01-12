@@ -3,12 +3,8 @@ using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -28,18 +24,18 @@ namespace FioRino_NewProject.Services
             _opRepository = opRepository;
         }
 
-        
+
         public async Task<Response> DeleteDmOrders(int Id, UserDTO UserInfo)
         {
             var dmOrders = await _oRepository.FindOrder(Id);
-            
-            if(UserInfo.RoleName == "Admin")
+
+            if (UserInfo.RoleName == "Admin")
             {
                 var findProduct = await _opRepository.GetOrderProductListByOrderIdAsync(Id);
                 if (findProduct.Count == 0)
                 {
                     await _oRepository.DeleteOrder(dmOrders.Id);
-                    return new Response();
+                    return new Response { Status = "Ok", Message = "Success!" };
                 }
                 foreach (var item in findProduct)
                 {
@@ -68,13 +64,11 @@ namespace FioRino_NewProject.Services
                             findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
                             await _context.SaveChangesAsync();
                         }
-
                     }
-
                     _context.DmOrders.Remove(dmOrders);
                     await _context.SaveChangesAsync();
                     return new Response { Status = "Ok", Message = "Success!" };
-                } 
+                }
             }
             else
                 return new Response { Status = "Error", Message = "Nie masz prawa do usunięcia pliku WZ!" };

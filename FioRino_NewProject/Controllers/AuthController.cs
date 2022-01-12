@@ -1,30 +1,22 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.DataTransferOrigins;
-using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+
     public class AuthController : ControllerBase
     {
         private readonly IUserRepository _repository;
@@ -57,7 +49,7 @@ namespace FioRino_NewProject.Controllers
             await _service.RegistrationUser(dto);
             return Ok();
         }
-        
+
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dTO)
@@ -156,7 +148,7 @@ namespace FioRino_NewProject.Controllers
                 User = UserInfo,
                 IsAuthenticated = user
             });
-        }   
+        }
         [HttpPost("VarifyUser")]
         public async Task<ActionResult> VerifyUser(RandomNumberDTO dto)
         {
@@ -168,11 +160,12 @@ namespace FioRino_NewProject.Controllers
         public async Task<ActionResult> ResetPassword(NewPasswordDTO dto)
         {
             var reset = await _service.ResetPassword(dto);
-            if(reset == null)
+            if (reset == null)
             {
-                return BadRequest(new Response { Status = "Error", Message = "Password was not updated!"});
+                return BadRequest(new Response { Status = "Error", Message = "Password was not updated!" });
             }
             return Ok(new Response { Status = "Success!", Message = "The Password is updated successfully" });
         }
+
     }
 }

@@ -1,29 +1,20 @@
+using FioRino_NewProject.AccessAttribute;
 using FioRino_NewProject.Data;
 using FioRino_NewProject.Repositories;
+using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
+using FioRino_NewProject.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using FioRino_NewProject.Settings;
-using FioRino_NewProject.Responses;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.IO;
-using FioRino_NewProject.Entities;
-using Microsoft.AspNetCore.Authorization;
-using FioRino_NewProject.AccessAttribute;
+using System.Text;
 
 namespace FioRino_NewProject
 {
@@ -56,6 +47,16 @@ namespace FioRino_NewProject
             services.AddScoped<IUniqueProductsRepository, UniqueProductsRepository>();
             services.AddScoped<ISkuRepository, SkuRepository>();
             services.AddScoped<ParsingProductsService>();
+            services.AddScoped<ParseHelper>();
+            services.AddScoped<ParseHelperInstance2>();
+            services.AddScoped<ParseHelperInstance1>();
+            services.AddScoped<ParseHelperInstance4>();
+            services.AddScoped<ParseHelperInstance5>();
+            services.AddScoped<ParseHelperInstance6>();
+            services.AddScoped<ParseHelperInstance7>();
+            services.AddScoped<ParseHelperInstance8>();
+            services.AddScoped<ParseHelperInstance3>();
+
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
@@ -86,7 +87,7 @@ namespace FioRino_NewProject
                 });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("HurtAccess", policy => 
+                options.AddPolicy("HurtAccess", policy =>
                 {
                     policy.Requirements.Add(new UserAccess { Hurt = true });
                     policy.AuthenticationSchemes.Add(
@@ -105,7 +106,7 @@ namespace FioRino_NewProject
                                         JwtBearerDefaults.AuthenticationScheme);
                 });
             });
-            
+
             services.AddCors();
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -119,9 +120,9 @@ namespace FioRino_NewProject
         {
             //if (env.IsDevelopment())
             //{
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FioRino_NewProject v1"));
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FioRino_NewProject v1"));
             //}
 
             //app.UseHttpsRedirection();
@@ -136,6 +137,7 @@ namespace FioRino_NewProject
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath/*, "wwwroot"*/)),
             });
 
+            app.UseWebSockets();
 
             app.UseRouting();
 

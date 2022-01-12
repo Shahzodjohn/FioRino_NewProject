@@ -1,13 +1,8 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
-using FioRino_NewProject.Entities;
 using FioRino_NewProject.Model;
 using FioRino_NewProject.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -54,6 +49,6 @@ namespace FioRino_NewProject.Controllers
 
             }
         }
-        
+
     }
 }

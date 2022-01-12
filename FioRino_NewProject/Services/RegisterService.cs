@@ -3,8 +3,6 @@ using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.DataTransferOrigins;
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +12,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,7 +59,7 @@ namespace FioRino_NewProject.Services
             };
             _context.DmUsers.Add(user);
             await _context.SaveChangesAsync();
-            if(user.RoleId == 1)
+            if (user.RoleId == 1)
             {
                 var userAccess = new DmUsersAccess
                 {
@@ -73,7 +70,7 @@ namespace FioRino_NewProject.Services
                 };
                 _context.DmUsersAccesses.Add(userAccess);
             }
-            else if(user.RoleId == 2)
+            else if (user.RoleId == 2)
             {
                 var userAccess = new DmUsersAccess
                 {
@@ -84,7 +81,7 @@ namespace FioRino_NewProject.Services
                 };
                 _context.DmUsersAccesses.Add(userAccess);
             }
-            
+
             await _context.SaveChangesAsync();
             return user;
         }
@@ -121,7 +118,7 @@ namespace FioRino_NewProject.Services
             var userExists = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id == dto.Id);
             var userRole = await _context.DmUsers.FirstOrDefaultAsync(x => x.RoleId == userExists.RoleId);
             var userRoles = userRole.RoleId;
-                var authClaims = new List<Claim>
+            var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userExists.Email),
                     new Claim(ClaimTypes.NameIdentifier, userExists.Id.ToString()),
@@ -138,7 +135,7 @@ namespace FioRino_NewProject.Services
             var Token = new JwtSecurityTokenHandler().WriteToken(token);
             return Token;
         }
-        
+
         public async Task<UserDTO> CurrentUser(DmUser currentUser)
         {
             var positionName = (from dmu in _context.DmUsers
@@ -150,8 +147,8 @@ namespace FioRino_NewProject.Services
                             join dmr in _context.DmRoles on dmu.RoleId equals dmr.Id
                             where dmu.Id == currentUser.Id
                             select dmr.RoleName).ToList().First();
-            var UserFind = _context.DmUsersAccesses.FirstOrDefault(x=>x.UserId == currentUser.Id);
-            
+            var UserFind = _context.DmUsersAccesses.FirstOrDefault(x => x.UserId == currentUser.Id);
+
             var UserInfo = new UserDTO
             {
                 Id = currentUser.Id.ToString(),

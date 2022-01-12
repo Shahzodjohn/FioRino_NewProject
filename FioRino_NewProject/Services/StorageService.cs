@@ -61,7 +61,7 @@ namespace FioRino_NewProject.Services
             //var findFromStan = await _storageReposioty.FindFromStorageByGtinAsync(Gtin);
             findFromStan.AmountLeft = parameters.Amount;
             await _context.SaveChangesAsync();
-            
+
             foreach (var item in OrderProductId)
             {
                 var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == item.OrderId);
@@ -77,7 +77,7 @@ namespace FioRino_NewProject.Services
                         item.ProductStatusesId = 1;
                     }
                 }
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
             }
             return findFromStan;
         }
@@ -196,7 +196,7 @@ namespace FioRino_NewProject.Services
                 archiveFile = archiveStream.ToArray();
             }
             using (FileStream fs = System.IO.File.Create($"PdfCodes/{OrderId}.zip"))
-            { fs.Write(archiveFile, 0, archiveFile.Length);}
+            { fs.Write(archiveFile, 0, archiveFile.Length); }
             return OrderId;
         }
     }

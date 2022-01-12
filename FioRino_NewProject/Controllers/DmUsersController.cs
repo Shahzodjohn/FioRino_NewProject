@@ -5,14 +5,9 @@ using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -35,10 +30,10 @@ namespace FioRino_NewProject.Controllers
         public async Task<IActionResult> UpdateUsersById(int id, UpdateUserDTO dmUsers)
         {
             var find = await _uService.CheckValidityEmail(id, dmUsers);
-            if(find.Status == "Error")
+            if (find.Status == "Error")
             {
                 return BadRequest(new Response { Status = "Error", Message = $"{find.Message}" });
-            }   
+            }
             //await _uService.UpdateUserById(id, dmUsers);
             return NoContent();
         }
@@ -57,17 +52,17 @@ namespace FioRino_NewProject.Controllers
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-               var list = await db.EXPOSE_dm_UsersAccess_ByUserIdAsync /**/ (parameters.UserId);
+                var list = await db.EXPOSE_dm_UsersAccess_ByUserIdAsync /**/ (parameters.UserId);
                 return Ok(list);
             }
         }
-        
+
         [HttpPut("UpdateAccesses")]
         public ActionResult PostDmUsersAccessUpdateAccesses([FromBody] UpdateAccessesParams parameters)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                 db.EXPOSE_dm_UsersAccess_UpdateAccesses /**/ (parameters.UserId ,parameters.Hurt, parameters.Magazyn, parameters.Archive);
+                db.EXPOSE_dm_UsersAccess_UpdateAccesses /**/ (parameters.UserId, parameters.Hurt, parameters.Magazyn, parameters.Archive);
                 return Ok();
             }
         }

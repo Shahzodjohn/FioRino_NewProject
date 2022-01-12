@@ -4,14 +4,8 @@ using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -38,7 +32,7 @@ namespace FioRino_NewProject.Controllers
         {
             public string SearchString { get; set; }
         }
-        
+
         [HttpGet("list")]
         public async Task<ActionResult> PostDmStoragelist([FromQuery] listParams parameters)
         {
@@ -55,7 +49,7 @@ namespace FioRino_NewProject.Controllers
             {
                 var SelectingcurrentProduct = await _pRepository.FindProductByParams(parameters.UniqueProductId, parameters.CategoryId, parameters.SizeId);
                 var productValidation = await _opService.ProductValidationForStanController(parameters);
-                if(productValidation.Status == "Error")
+                if (productValidation.Status == "Error")
                 {
                     return BadRequest(productValidation.Message);
                 }
@@ -66,7 +60,7 @@ namespace FioRino_NewProject.Controllers
                     int? stanId = 0;
                     db.EXPOSE_dm_Storage_Insertingproducts /**/ (parameters.UniqueProductId, parameters.SkuCodeId, parameters.ProductId, parameters.CategoryId, parameters.SizeId, parameters.Amount, ref stanId);
                     var findFromStan = await _storageService.UpdatingAmountStorage(stanId ?? 0, parameters, SelectingcurrentProduct.Gtin);
-                    if(findFromStan == null)
+                    if (findFromStan == null)
                     {
                         return BadRequest(new Response { Status = "Error", Message = "Ten produkt jest już w magazynie!" });
                     }
@@ -82,7 +76,7 @@ namespace FioRino_NewProject.Controllers
         public async Task<IActionResult> MinusingAmount(StanAmountUpdateDTO dTO)
         {
             var actionStorage = await _storageService.MinusingAmountFromStorage(dTO);
-            if(actionStorage.Status == "Error")
+            if (actionStorage.Status == "Error")
             {
                 return BadRequest(actionStorage.Message);
             }
@@ -116,5 +110,6 @@ namespace FioRino_NewProject.Controllers
                 return Ok(list);
             }
         }
+
     }
 }

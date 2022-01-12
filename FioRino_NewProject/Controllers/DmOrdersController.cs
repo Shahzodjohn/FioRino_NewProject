@@ -1,16 +1,12 @@
-﻿using FioRino_NewProject.Data;
-using FioRino_NewProject.DataTransferObjects;
+﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -81,7 +77,7 @@ namespace FioRino_NewProject.Controllers
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var  Archive = await db.EXPOSE_dm_Orders_ArchiveListAsync /**/ (parameters.SearchString);
+                var Archive = await db.EXPOSE_dm_Orders_ArchiveListAsync /**/ (parameters.SearchString);
                 return Archive;
             }
         }
@@ -130,7 +126,7 @@ namespace FioRino_NewProject.Controllers
             var claim = User.Identity as ClaimsIdentity;
             var currentUser = await _repository.GetUser(claim.GetUserId<int>());
             var UserInfo = await _service.CurrentUser(currentUser);
-            
+
             var message = await _oService.DeleteDmOrders(id, UserInfo);
             if (message.Status == "Ok")
             {
@@ -138,7 +134,7 @@ namespace FioRino_NewProject.Controllers
             }
             else
                 return BadRequest(new Response { Status = "Error", Message = "Nie masz prawa do usunięcia pliku WZ!" });
-            
+
         }
         [HttpPost("CreateOrder")]
         public async Task<ActionResult> PostDmOrdersCreateOrder([FromBody] CreateOrderParams parameters)
@@ -149,8 +145,8 @@ namespace FioRino_NewProject.Controllers
                 var findUser = await _userRepository.GetUser(parameters.SenderId);
                 parameters.OrderExecutor = "FIORINO Izabela Gądek-Pagacz"; parameters.SourceOfOrder = "Utworzone ręcznie"; parameters.Is_InMagazyn = false;
                 parameters.SenderName = findUser.FirstName + " " + findUser.LastName;
-                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt,parameters.UpdatedAt,parameters.OrderStatusId,parameters.Is_InMagazyn,parameters.SourceOfOrder,
-                parameters.OrderExecutor,parameters.SenderName,ref orderId);
+                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt, parameters.UpdatedAt, parameters.OrderStatusId, parameters.Is_InMagazyn, parameters.SourceOfOrder,
+                parameters.OrderExecutor, parameters.SenderName, ref orderId);
                 await _save.SaveAsync();
                 return Ok(new Response { Message = "OK", Status = "OrderId = " + orderId.ToString() });
             }
@@ -170,6 +166,6 @@ namespace FioRino_NewProject.Controllers
             var UpdatingEntities = await _oService.UpdateProductDetails(dto.OrderExecutor, dto.SenderId, dto.CreatedAt, dto.OrderId);
             return Ok(new Response { Status = "OK", Message = $"The Order {UpdatingEntities.Id} is updated sucessfully" });
         }
-       
+
     }
 }

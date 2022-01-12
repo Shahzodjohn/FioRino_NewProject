@@ -2,14 +2,12 @@
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -37,6 +35,7 @@ namespace FioRino_NewProject.Controllers
         [HttpPost("CreateOrder")]
         public async Task<IActionResult> CreateOrder(IFormFile file, int Id)
         {
+
             try
             {
                 var currentUser = await _repository.GetUser(Id);
@@ -67,7 +66,7 @@ namespace FioRino_NewProject.Controllers
                             var tempColumn = indexColumn + 1;
                             int cicleRound = 10;
                             var amount = 0;
-                            while(true)//for (; ;)
+                            while (true)//for (; ;)
                             {
                                 var ExAmount = worksheet.Cells[cicleRound, 19].Value.ToString().Trim();
                                 Int32.TryParse(ExAmount.ToString(), out amount);
@@ -77,10 +76,10 @@ namespace FioRino_NewProject.Controllers
                                     await _ParsingService.UpdateOrder(amount, OrderId);
                                     break;
                                 }
-                                    cicleRound++;
+                                cicleRound++;
                             };
                             var indexing = 4;
-                            while(true)//for (; ;)
+                            while (true)//for (; ;)
                             {
                                 sizeName = (worksheet.Cells[9, indexing].Value == null ? "" : worksheet.Cells[9, indexing].Value.ToString());
                                 var sizeNumber = (worksheet.Cells[9, indexing].Value == null ? "" : worksheet.Cells[9, indexing].Value.ToString());
@@ -138,7 +137,7 @@ namespace FioRino_NewProject.Controllers
                                     int SizeId = 0;
                                     if (findSizes == null)
                                     {
-                                       SizeId = await _ParsingService.InsertSize(sizeNum, sizeName);
+                                        SizeId = await _ParsingService.InsertSize(sizeNum, sizeName);
                                     }
                                     else
                                     {
@@ -157,7 +156,7 @@ namespace FioRino_NewProject.Controllers
                                     var SkuNumber = worksheet.Cells[row, 1].Value.ToString().Trim();
                                     var SkuId = await _ParsingService.InsertSKUcodes(SkuNumber);
                                     var CheckingProductValidation = await _ParsingService.CheckingProductValidation(productName, category.Id, size.Id);
-                                    
+
                                     var productNameworksheet = worksheet.Cells[row, 2].Value.ToString().Trim();
                                     var uniqueproductId = await _ParsingService.CreateUniqueProduct(productNameworksheet);
                                     var ProductId = 0;
@@ -173,7 +172,7 @@ namespace FioRino_NewProject.Controllers
                                     }
                                     if (GtinPaging != "")
                                     {
-                                        var insert = await _ParsingService.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id,productAmount, GtinPaging);
+                                        var insert = await _ParsingService.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id, productAmount, GtinPaging);
                                         if (findStan != null && insert.Amount <= findStan.AmountLeft)
                                         {
                                             findStan.AmountLeft = findStan.AmountLeft - insert.Amount;

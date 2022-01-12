@@ -1,7 +1,5 @@
-﻿using System;
+﻿using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using FioRino_NewProject.Entities;
 
 #nullable disable
 

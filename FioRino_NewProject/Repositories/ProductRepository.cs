@@ -1,9 +1,6 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Repositories
@@ -25,7 +22,7 @@ namespace FioRino_NewProject.Repositories
 
         public async Task<DmProduct> FindProductByIdAsync(int Id)
         {
-            var product = await _context.DmProducts.FirstOrDefaultAsync(x=>x.Id == Id);
+            var product = await _context.DmProducts.FirstOrDefaultAsync(x => x.Id == Id);
             return product;
         }
         public async Task<DmProduct> FindProductByParams(int UniqueProductId, int CategoryId, int SizeId)
@@ -44,6 +41,6 @@ namespace FioRino_NewProject.Repositories
             return Size;
         }
 
-        
+
     }
 }

@@ -1,10 +1,6 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
@@ -19,7 +15,7 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 db.EXPOSE_dm_WzMagazyn_UpdateProductAmountInStanMagazynu /**/ (parameters.WzMagazynId, parameters.Amount);
-                return Ok(); 
+                return Ok();
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +18,7 @@ namespace FioRino_NewProject.Repositories
         public async Task<int> CreateSizeIfNull(DmSize findSize, int SizeNum, string FindSizeAlphabet)
         {
             int sizeId = 0;
-            var size = await _context.DmSizes.FirstOrDefaultAsync(x=>x.Title == FindSizeAlphabet);
+            var size = await _context.DmSizes.FirstOrDefaultAsync(x => x.Title == FindSizeAlphabet);
             if (findSize == null)
             {
                 if (FindSizeAlphabet != null)
@@ -32,7 +30,7 @@ namespace FioRino_NewProject.Repositories
                     await _context.SaveChangesAsync();
                     return sizeId = addingSizes.Entity.Id;
                 }
-                var Size = await _context.DmSizes.FirstOrDefaultAsync(x=>x.Number == SizeNum);
+                var Size = await _context.DmSizes.FirstOrDefaultAsync(x => x.Number == SizeNum);
                 if (size == null && SizeNum != 0)
                 {
                     var addingSizes = _context.DmSizes.Add(new DmSize
@@ -44,23 +42,30 @@ namespace FioRino_NewProject.Repositories
                 }
                 else
                 {
-                    var brakSize = await _context.DmSizes.FirstOrDefaultAsync(x=>x.Title == "BRAK");
+                    var brakSize = await _context.DmSizes.FirstOrDefaultAsync(x => x.Title == "BRAK");
                     if (brakSize == null)
                     {
-                        var CreateSize = _context.DmSizes.Add(new DmSize { Title = "BRAK",
-                                                                           Number = 0});
+                        var CreateSize = _context.DmSizes.Add(new DmSize
+                        {
+                            Title = "BRAK",
+                            Number = 0
+                        });
                         await _context.SaveChangesAsync();
                         return CreateSize.Entity.Id;
                     }
-                    else 
+                    else
                     {
                         return brakSize.Id;
                     }
                 }
-                
+
                 var FindCurrentSize = _context.DmSizes.FirstOrDefault(x => x.Id == sizeId);
 
                 #region Deviding by Sizes
+                if (FindCurrentSize.Number <= 15)
+                {
+                    FindCurrentSize.Title = $"rozm.{FindCurrentSize.Number}";
+                }
                 if (FindCurrentSize.Number == 16 || FindCurrentSize.Number == 17)
                 {
                     FindCurrentSize.Title = "XS";
@@ -129,7 +134,7 @@ namespace FioRino_NewProject.Repositories
                 {
                     FindCurrentSize.Title = "13XL";
                 }
-                
+
                 if (FindCurrentSize.Number == 0)
                 {
                     FindCurrentSize.Title = "BRAK";
