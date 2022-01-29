@@ -33,8 +33,8 @@ namespace FioRino_NewProject.Services
 
             currentUser.RoleId = dmUsers.RoleId;
             await _context.SaveChangesAsync();
-            var @Valid = dmUsers.Email.Contains("@");
-            if (@Valid == false)
+            var Valid = dmUsers.Email.Contains("@");
+            if (Valid == false)
             {
                 return new Response { Status = "Error", Message = "Please insert valid Email Address!" };
             }

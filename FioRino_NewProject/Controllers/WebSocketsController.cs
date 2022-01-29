@@ -151,11 +151,6 @@ namespace FioRino_NewProject.Controllers
                     var bufferToSend = new ArraySegment<Byte>(botResult, 0, botResult.Length);
                     await webSocket.SendAsync(bufferToSend, WebSocketMessageType.Text, true, CancellationToken.None/*, stoppingToken*/);
                 }
-                //for (int i = 0; i < 200; i++)
-                //{
-
-                //}
-
             }
         }
     }

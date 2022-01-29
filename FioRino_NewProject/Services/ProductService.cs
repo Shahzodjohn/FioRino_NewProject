@@ -66,7 +66,7 @@ namespace FioRino_NewProject.Services
             dmOrder.OrderStatusId = 2;
             await _context.SaveChangesAsync();
         }
-        public async Task<DmProduct> InsertDmProduct(string ProductName, int CategoryId, string Gtin, int UniqueProductId)
+        public async Task<DmProduct> InsertDmProduct(string ProductName, int CategoryId, string Gtin, int UniqueProductId, int SizeId)
         {
             var FindProduct = await _productReposiotory.FindProductByGtinAsync(Gtin);
             if (FindProduct == null)
@@ -77,7 +77,7 @@ namespace FioRino_NewProject.Services
                     CategoryId = CategoryId,
                     Gtin = Gtin,
                     UniqueProductId = UniqueProductId,
-
+                    SizeId = SizeId
                 };
                 await _context.DmProducts.AddAsync(AddProd);
                 await _context.SaveChangesAsync();

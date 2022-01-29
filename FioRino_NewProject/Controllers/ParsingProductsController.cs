@@ -43,7 +43,6 @@ namespace FioRino_NewProject.Controllers
                 return await db.EXPOSE_dm_DownloadingStatus_LoadingProcessAsync /**/ ();
             }
         }
-        // EXPOSE_dm_DownloadingStatus_SuccessDate
 
         [HttpPost("SuccessDate")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_DownloadingStatus_SuccessDateResult>>> PostDmDownloadingStatusSuccessDate()
@@ -51,7 +50,6 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 return await db.EXPOSE_dm_DownloadingStatus_SuccessDateAsync /**/ ();
-
             }
         }
     }

@@ -20,8 +20,10 @@ namespace FioRino_NewProject.Repositories
             return containProduct;
         }
 
-        public async Task<int> InsertUniqueProductIfNull(DmUniqueProduct dmProduct, string ProductName)
+        public async Task<int> InsertUniqueProductIfNull(string ProductName)
         {
+            var dmProduct = await _context.DmUniqueProducts.FirstOrDefaultAsync(x => x.ProductName == ProductName);
+            
             int ProductId = 0;
 
             if (dmProduct == null)

@@ -127,7 +127,7 @@ namespace FioRino_NewProject.Controllers
                 await _mailservice.SendEmailAsync(request);
                 return Ok();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new Response { Status = "404", Message = "Message was not sent!" });
             }

@@ -1,4 +1,5 @@
 using FioRino_NewProject.AccessAttribute;
+using FioRino_NewProject.Controllers;
 using FioRino_NewProject.Data;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
@@ -48,14 +49,9 @@ namespace FioRino_NewProject
             services.AddScoped<ISkuRepository, SkuRepository>();
             services.AddScoped<ParsingProductsService>();
             services.AddScoped<ParseHelper>();
-            services.AddScoped<ParseHelperInstance2>();
-            services.AddScoped<ParseHelperInstance1>();
-            services.AddScoped<ParseHelperInstance4>();
-            services.AddScoped<ParseHelperInstance5>();
-            services.AddScoped<ParseHelperInstance6>();
-            services.AddScoped<ParseHelperInstance7>();
-            services.AddScoped<ParseHelperInstance8>();
-            services.AddScoped<ParseHelperInstance3>();
+            services.AddScoped<ExcelParsingClass>();
+            services.AddTransient<ParsingByDownloadingExcel>();
+
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
