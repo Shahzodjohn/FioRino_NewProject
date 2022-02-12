@@ -1,5 +1,7 @@
-﻿using FioRino_NewProject.Entities;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using FioRino_NewProject.Entities;
 
 #nullable disable
 
@@ -53,8 +55,9 @@ namespace FioRino_NewProject.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=lab500.nc-one.com, 1530;Database=FioRinoBase;User ID=sa;Password=KFaerZ2dZRiM");
-                //optionsBuilder.UseSqlServer("Data source = SHAHZOD;initial catalog = FiorinoBaseData; integrated security = true;");
+                //optionsBuilder.UseSqlServer("Data source = SHAHZOD;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;");
             }
         }
 

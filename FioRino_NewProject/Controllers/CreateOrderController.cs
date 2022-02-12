@@ -46,7 +46,7 @@ namespace FioRino_NewProject.Controllers
                     using (var package = new ExcelPackage(stream))
                     {
                         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[1];
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                         if (worksheet.Cells[1, 4].Value == null || worksheet.Cells[1, 4].Value.ToString() != "FIORINO Izabela Gądek-Pagacz")
                         {
                             return BadRequest(new Response { Status = "Error", Message = "File ERROR! Please choose the correct file" });

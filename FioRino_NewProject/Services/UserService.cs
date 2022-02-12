@@ -66,11 +66,6 @@ namespace FioRino_NewProject.Services
                     return new Response { Status = "Error", Message = "Please insert valid Email Address!" };
                 }
                 else return new Response { Status = "Ok", Message = "Success!" };
-                //var validation = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id != id);
-                //if (validation != null)
-                //{
-                //    return new Response { Status = "Ok", Message = "Success!" };
-                //}
             }
             return new Response { Status = "Error", Message = "Email address is invalid!" };
         }

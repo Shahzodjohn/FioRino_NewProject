@@ -41,6 +41,10 @@ namespace FioRino_NewProject.Repositories
             return Size;
         }
 
-
+        public async Task<DmProduct> FindProductByName(string ProductName)
+        {
+            var Product = await _context.DmProducts.FirstOrDefaultAsync(x=>x.ProductName == ProductName);
+            return Product;
+        }
     }
 }

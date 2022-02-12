@@ -10,5 +10,6 @@ namespace FioRino_NewProject.Repositories
         Task<DmProduct> FindProductByParams(int UniqueProductId, int CategoryId, int SizeId);
         Task<DmProduct> FindCategoryAsync(int UniqueProductId, int CategoryId);
         Task<DmProduct> FindSizeAsync(int UniqueProductId, int SizeId);
+        Task<DmProduct> FindProductByName(string ProductName);
     }
 }
