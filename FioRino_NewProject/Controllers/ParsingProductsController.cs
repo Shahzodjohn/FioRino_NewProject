@@ -16,18 +16,18 @@ namespace FioRino_NewProject.Controllers
         {
             _parsingProductsService = parsingProductsService;
         }
-        [HttpGet]
-        public async Task<IActionResult> ParsingProducts()
-        {
-            var message = await _parsingProductsService.ParsingProducts();
-            if (message.Status == "Ok")
-            {
-                return Ok(message.Message);
-            }
-            else
-                return BadRequest(message.Message);
-            //return Ok();
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> ParsingProducts()
+        //{
+        //    var message = await _parsingProductsService.ParsingProducts();
+        //    if (message.Status == "Ok")
+        //    {
+        //        return Ok(message.Message);
+        //    }
+        //    else
+        //        return BadRequest(message.Message);
+        //    //return Ok();
+        //}
         [HttpPut("StopParsing")]
         public async Task<IActionResult> StopParsing()
         {

@@ -48,7 +48,7 @@ namespace FioRino_NewProject
             services.AddScoped<IUniqueProductsRepository, UniqueProductsRepository>();
             services.AddScoped<ISkuRepository, SkuRepository>();
             services.AddScoped<ParsingProductsService>();
-            services.AddScoped<ParseHelper>();
+            services.AddScoped<IBrakiService, BrakiService>();
             services.AddScoped<ExcelParsingClass>();
             services.AddTransient<ParsingByDownloadingExcel>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -107,6 +107,8 @@ namespace FioRino_NewProject
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FioRino_NewProject", Version = "v1" });
             });
+            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -130,6 +132,7 @@ namespace FioRino_NewProject
             {
                 FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath/*, "wwwroot"*/)),
             });
+            app.UseDefaultFiles();
 
             app.UseWebSockets();
 

@@ -16,7 +16,9 @@ namespace FioRino_NewProject.Entities
 
         public int Id { get; set; }
         public string ProductName { get; set; }
+        public int? SkuCodeId { get; set; }
 
+        public virtual DmSkucode SkuCode { get; set; }
         public virtual ICollection<DmOrderProduct> DmOrderProducts { get; set; }
         public virtual ICollection<DmProduct> DmProducts { get; set; }
         public virtual ICollection<DmStorage> DmStorages { get; set; }

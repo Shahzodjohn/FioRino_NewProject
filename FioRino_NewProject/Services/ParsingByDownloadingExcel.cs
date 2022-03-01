@@ -32,7 +32,7 @@ namespace FioRino_NewProject.Services
         public async Task DownloadZip()
         {
             var rootPath = _environment.WebRootPath;
-            //var zipDirectory = rootPath + "\\Zips";
+           // var zipDirectory = rootPath + "\\Zips";
            var zipDirectory = rootPath + "/Zips/";
   
             var originalEntity = await _statusRepository.GetFirst();
@@ -50,7 +50,7 @@ namespace FioRino_NewProject.Services
                 Directory.CreateDirectory(zipDirectory);
             string[] DownloadCheck = Directory.GetFiles($"{zipDirectory}", "*.zip");
             ChromeOptions options = new ChromeOptions();
-            //options.AddArguments("--headless");
+            options.AddArguments("--headless");
             options.AddArgument("test-type");
             options.AddArgument("no-sandbox");
             //if (!Directory.Exists(zipDirectory))
@@ -67,13 +67,14 @@ namespace FioRino_NewProject.Services
             element = driver.FindElement(By.Name("password"));
             element.SendKeys("Epoka1-wsx");
             element.Submit();
-            driver.Navigate().GoToUrl("https://mojegs1.pl/moje-produkty");
 
             element = driver.FindElement(By.Id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"));
             element.Click();
             element = driver.FindElement(By.XPath("//*[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"));
             //await Task.Delay(1000);
             element.Click();
+            driver.Navigate().GoToUrl("https://mojegs1.pl/moje-produkty");
+
 
             element = driver.FindElement(By.Id("productsListExportBtn"));
             element.Click();
@@ -82,7 +83,9 @@ namespace FioRino_NewProject.Services
             element.Click();
 
             element = driver.FindElement(By.Id("productsListExportModalAcceptBtn"));
+            await Task.Delay(1000);
             element.Click();
+            await Task.Delay(1000);
 
             int num = 0;
 

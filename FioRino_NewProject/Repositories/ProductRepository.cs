@@ -20,7 +20,7 @@ namespace FioRino_NewProject.Repositories
             return product;
         }
 
-        public async Task<DmProduct> FindProductByIdAsync(int Id)
+        public async Task<DmProduct> FindProductByIdAsync(int? Id)
         {
             var product = await _context.DmProducts.FirstOrDefaultAsync(x => x.Id == Id);
             return product;

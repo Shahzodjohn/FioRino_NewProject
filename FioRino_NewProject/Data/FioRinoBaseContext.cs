@@ -446,6 +446,11 @@ namespace FioRino_NewProject.Data
                 entity.ToTable("dm_UniqueProducts");
 
                 entity.Property(e => e.ProductName).HasMaxLength(250);
+
+                entity.HasOne(d => d.SkuCode)
+                    .WithMany(p => p.DmUniqueProducts)
+                    .HasForeignKey(d => d.SkuCodeId)
+                    .HasConstraintName("FK__dm_Unique__SkuCo__52E34C9D");
             });
 
             modelBuilder.Entity<DmUser>(entity =>

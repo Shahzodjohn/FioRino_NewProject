@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspose.Cells" Version="22.2.0" />
+    <PackageReference Include="Aspose.Words" Version="22.2.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.15.0" />
     <PackageReference Include="EPPlus" Version="5.8.3" />
+    <PackageReference Include="FreeSpire.Office" Version="4.3.1" />
     <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1363" />
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.39" />
@@ -29,12 +33,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1000" />
     <PackageReference Include="MimeKit" Version="2.15.1" />
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="RestSharp" Version="106.13.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.1.0" />
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="97.0.4692.7100" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.30.0.1" />
+    <PackageReference Include="Spire.XLS" Version="12.1.0" />
     <PackageReference Include="SuperWebSocketNETServer" Version="0.8.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="System.IO" Version="4.3.0" />

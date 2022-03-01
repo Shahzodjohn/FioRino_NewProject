@@ -137,6 +137,7 @@ namespace FioRino_NewProject.Controllers
                 await _ParsingByDownloadingExcel.DownloadZip();
                 var rootPath = _environment.WebRootPath;
                 var ZipPath = rootPath + "/Zips/";
+                //var ZipPath = rootPath + "\\Zips";
                 var TotalAmount = _ParsingByDownloadingExcel.GetProductAmount();
                 await _ParsingByDownloadingExcel.UnzipZip(ZipPath, TotalAmount);
                 string[] XlsxFiles = Directory.GetFiles($"{ZipPath}", "*.xlsx");
@@ -272,8 +273,16 @@ namespace FioRino_NewProject.Controllers
                             (isFasterCategory ? fasterCategory.Id : brak.Id));
                         var MatchingProducts = output.Replace("    ", "");
                         string FindSizeAlphabet;
+                        int skuCodeId;
                         //var containProduct = await _uniqueProductRepository.FindUniqueProductByName(MatchingProducts);
-                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts);
+                        if (worksheet.Cells[row, 22].Value != null)
+                        {
+                            var SKUString = worksheet.Cells[row, 22].Value.ToString();
+                            skuCodeId = await _skuRepository.InsertingSkuIFNull(SKUString);
+                        }
+                        else
+                            skuCodeId = 0;
+                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts, skuCodeId);
                         var splitLastIndex = ProductFullName.ToString().Split(" ").Last();
                         if (MatchingProducts.Split(" ").Last() == "M" ||
                             MatchingProducts.Split(" ").Last() == "S" ||
@@ -299,11 +308,11 @@ namespace FioRino_NewProject.Controllers
                         }
                         var findSize = await _sizeRepository.FindSizeByNumber(SizeNum);
                         var sizeId = await _sizeRepository.CreateSizeIfNull(findSize, SizeNum, FindSizeAlphabet);
-                        if (worksheet.Cells[row, 22].Value != null)
-                        {
-                            var SKUString = worksheet.Cells[row, 22].Value.ToString();
-                            var skuCodeId = await _skuRepository.InsertingSkuIFNull(SKUString);
-                        }
+                        //if (worksheet.Cells[row, 22].Value != null)
+                        //{
+                        //    var SKUString = worksheet.Cells[row, 22].Value.ToString();
+                        //    var skuCodeId = await _skuRepository.InsertingSkuIFNull(SKUString);
+                        //}
                         var GTIN = worksheet.Cells[row, 3].Value.ToString();
 
                         

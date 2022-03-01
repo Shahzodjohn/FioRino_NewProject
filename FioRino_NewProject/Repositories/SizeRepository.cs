@@ -150,6 +150,12 @@ namespace FioRino_NewProject.Repositories
             return sizeId;
         }
 
+        public async Task<DmSize> FindSizeById(int? Id)
+        {
+            var findSize = await _context.DmSizes.FirstOrDefaultAsync(x => x.Id == Id);
+            return findSize;
+        }
+
         public async Task<DmSize> FindSizeByNumber(int SizeNum)
         {
             var findSize = await _context.DmSizes.FirstOrDefaultAsync(x => x.Number == SizeNum);

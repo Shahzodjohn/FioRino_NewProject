@@ -8,5 +8,6 @@ namespace FioRino_NewProject.Repositories
     {
         Task<List<DmCategory>> CreateCategoryWithListReturn();
         Task CreateCategory();
+        Task<DmCategory> FindCategoryById(int? Id);
     }
 }

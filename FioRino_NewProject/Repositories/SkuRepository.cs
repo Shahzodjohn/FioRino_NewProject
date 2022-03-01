@@ -20,6 +20,12 @@ namespace FioRino_NewProject.Repositories
             return find;
         }
 
+        public async Task<DmSkucode> FindSkuBySkuId(int? SkuId)
+        {
+            var find = await _context.DmSkucodes.FirstOrDefaultAsync(x => x.Id == SkuId);
+            return find;
+        }
+
         public async Task<int> InsertingSkuIFNull(string skuCodeName)
         {
             var find = await _context.DmSkucodes.FirstOrDefaultAsync(x=>x.SkucodeName == skuCodeName);

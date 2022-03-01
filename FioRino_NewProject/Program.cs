@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace FioRino_NewProject
 {
@@ -16,5 +17,6 @@ namespace FioRino_NewProject
              {
                  webBuilder.UseStartup<Startup>().UseWebRoot("wwwroot");
              });
+        
     }
 }

@@ -3,7 +3,9 @@ using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Services
@@ -20,12 +23,14 @@ namespace FioRino_NewProject.Services
         private readonly IStorageRepository _storageReposioty;
         private readonly IOrderProductsRepository _OrderProductRepository;
         private readonly FioRinoBaseContext _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public StorageService(IStorageRepository storageReposioty, IOrderProductsRepository orderProductRepository, FioRinoBaseContext context)
+        public StorageService(IStorageRepository storageReposioty, IOrderProductsRepository orderProductRepository, FioRinoBaseContext context, IWebHostEnvironment environment)
         {
             _storageReposioty = storageReposioty;
             _OrderProductRepository = orderProductRepository;
             _context = context;
+            _environment = environment;
         }
         public async Task<Response> MinusingAmountFromStorage(StanAmountUpdateDTO dTO)
         {
@@ -84,7 +89,6 @@ namespace FioRino_NewProject.Services
         public async Task<int> DrukujCodes(int OrderId)
         {
             using var client = new HttpClient();
-
             HtmlAgilityPack.HtmlDocument web = new HtmlAgilityPack.HtmlDocument();
             string filePath = Path.GetFullPath($"PdfCodes/");
             var fileName = ($"PdfCodes/{OrderId}" + ".zip");
@@ -102,7 +106,7 @@ namespace FioRino_NewProject.Services
                 }
                 System.IO.File.Delete(fileName);
                 Directory.CreateDirectory(filePath);
-            }
+            }   
             else
             {
                 Directory.CreateDirectory(filePath);
@@ -168,10 +172,12 @@ namespace FioRino_NewProject.Services
                         streamToReadFrom.CopyTo(ms);
                         Images.Add(ms);
                     }
-
                 }
             }
+
+            
             byte[] archiveFile;
+            
             using (var archiveStream = new MemoryStream())
             {
                 using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
@@ -185,7 +191,7 @@ namespace FioRino_NewProject.Services
                         if (findOrder[numArray].ProductStatusesId == 1)
                         {
                             var fileLen = Convert.ToInt32(file.Length);
-                            var zipArchiveEntry = archive.CreateEntry(findOrder[numArray].Gtin + ".pdf", CompressionLevel.Fastest);
+                            var zipArchiveEntry = archive.CreateEntry(findOrder[numArray].Gtin + ".pdf", System.IO.Compression.CompressionLevel.Fastest);
                             using (var zipStream = zipArchiveEntry.Open())
                                 zipStream.Write(file.ToArray(), 0, fileLen);
                         }
@@ -199,5 +205,8 @@ namespace FioRino_NewProject.Services
             { fs.Write(archiveFile, 0, archiveFile.Length); }
             return OrderId;
         }
+        
     }
+    
+
 }

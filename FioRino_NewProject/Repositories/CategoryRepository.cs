@@ -92,5 +92,12 @@ namespace FioRino_NewProject.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<DmCategory> FindCategoryById(int? Id)
+        {
+            var category = await _context.DmCategories.FirstOrDefaultAsync(x => x.Id == Id);
+            return category;
+        }
+
     }
 }
