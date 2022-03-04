@@ -21,15 +21,17 @@ namespace FioRino_NewProject.Controllers
         private readonly ISaveRepository _Save;
         private readonly IOrderRepository _OrderService;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IOrderProductsRepository _OrderProductRepository;
 
 
-        public CreateOrderController(IUserRepository repository, IParsingExcelService parsingService, ISaveRepository save, IOrderRepository orderService, ICategoryRepository categoryRepository)
+        public CreateOrderController(IUserRepository repository, IParsingExcelService parsingService, ISaveRepository save, IOrderRepository orderService, ICategoryRepository categoryRepository, IOrderProductsRepository orderProductRepository)
         {
             _repository = repository;
             _ParsingService = parsingService;
             _Save = save;
             _OrderService = orderService;
             _categoryRepository = categoryRepository;
+            _OrderProductRepository = orderProductRepository;
         }
 
         [HttpPost("CreateOrder")]
@@ -66,7 +68,7 @@ namespace FioRino_NewProject.Controllers
                             var tempColumn = indexColumn + 1;
                             int cicleRound = 10;
                             var amount = 0;
-                            while (true)//for (; ;)
+                            while (true)
                             {
                                 var ExAmount = worksheet.Cells[cicleRound, 19].Value.ToString().Trim();
                                 Int32.TryParse(ExAmount.ToString(), out amount);
@@ -79,7 +81,7 @@ namespace FioRino_NewProject.Controllers
                                 cicleRound++;
                             };
                             var indexing = 4;
-                            while (true)//for (; ;)
+                            while (true)
                             {
                                 sizeName = (worksheet.Cells[9, indexing].Value == null ? "" : worksheet.Cells[9, indexing].Value.ToString());
                                 var sizeNumber = (worksheet.Cells[9, indexing].Value == null ? "" : worksheet.Cells[9, indexing].Value.ToString());
@@ -172,7 +174,7 @@ namespace FioRino_NewProject.Controllers
                                     }
                                     if (GtinPaging != "")
                                     {
-                                        var insert = await _ParsingService.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id, productAmount, GtinPaging);
+                                        var insert = await _OrderProductRepository.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id, productAmount, GtinPaging);
                                         if (findStan != null && insert.Amount <= findStan.AmountLeft)
                                         {
                                             findStan.AmountLeft = findStan.AmountLeft - insert.Amount;
@@ -256,7 +258,7 @@ namespace FioRino_NewProject.Controllers
                                         SkuId = await _ParsingService.InsertSKUcodes(SkuNumber);
                                         if (GtinPage != "")
                                         {
-                                            var insert = await _ParsingService.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id, productAmount, GtinPage);
+                                            var insert = await _OrderProductRepository.InsertProductsToOrderProducts(OrderId, findProduct.Id, SizeId, SkuId, category.Id, productAmount, GtinPage);
                                             if (findStan != null && insert.Amount <= findStan.AmountLeft)
                                             {
                                                 findStan.AmountLeft = findStan.AmountLeft - insert.Amount;

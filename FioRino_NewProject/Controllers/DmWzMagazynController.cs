@@ -10,11 +10,11 @@ namespace FioRino_NewProject.Controllers
     public class DmWzMagazynController : ControllerBase
     {
         [HttpPost("UpdateProductAmountInStanMagazynu")]
-        public async Task<ActionResult> PostDmWzMagazynUpdateProductAmountInStanMagazynu([FromBody] UpdateProductAmountInStanMagazynuParams parameters)
+        public ActionResult PostDmWzMagazynUpdateProductAmountInStanMagazynu([FromBody] UpdateProductAmountInStanMagazynuParams parameters)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                db.EXPOSE_dm_WzMagazyn_UpdateProductAmountInStanMagazynu /**/ (parameters.WzMagazynId, parameters.Amount);
+                 db.EXPOSE_dm_WzMagazyn_UpdateProductAmountInStanMagazynu /**/ (parameters.WzMagazynId, parameters.Amount);
                 return Ok();
             }
         }

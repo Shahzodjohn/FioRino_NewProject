@@ -37,7 +37,7 @@ namespace FioRino_NewProject.Controllers
             {
                 var procedure = await db.EXPOSE_dm_Products_SelectingByGtinNumberAsync /**/ (parameters.Gtin, parameters.Amount, parameters.SkuCodeId);
                 await _pService.AddingProductsToStorage(procedure[0].GTIN, parameters.SkuCodeId, parameters.Amount, procedure[0].ProductId, procedure[0].SizeId ?? 0, procedure[0].CategoryId ?? 0);
-                return Ok(); /*--procedure*/
+                return Ok();
             }
         }
         [HttpPost("list")]

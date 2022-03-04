@@ -70,7 +70,6 @@ namespace FioRino_NewProject.Controllers
             };
         }
         #endregion
-        //let webSocket = new WebSocket('wss://localhost:44372/ws');
         #region
         private async Task Echo(WebSocket webSocket)
         {

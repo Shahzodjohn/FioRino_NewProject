@@ -19,7 +19,6 @@ namespace FioRino_NewProject.Services
         Task<DmProduct> CheckingProductValidation(string productName, int CategoryId, int SizeId);
         Task<int> CreateUniqueProduct(string productNameworksheet);
         Task<int> InsertProductsToDmProducts(string ProductName, int uniqueproductId, int categoryId, int SizeId, string GtinPaging);
-        Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging);
         Task<DmSkucode> FindSkuCode(string SkuNumber);
     }
 }

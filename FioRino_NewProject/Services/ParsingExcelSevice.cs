@@ -164,24 +164,7 @@ namespace FioRino_NewProject.Services
 
         }
 
-        public async Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging)
-        {
-            var insert = new DmOrderProduct
-            {
-                OrderId = OrderId,
-                ProductId = ProductId,
-                SizeId = SizeId,
-                SkucodeId = SkuId,
-                CategoryId = CategoryId,
-                Amount = productAmount,
-                ProductStatusesId = 1,
-                Gtin = GtinPaging
-            };
-            _context.DmOrderProducts.Add(insert);
-            await _context.SaveChangesAsync();
-
-            return insert;
-        }
+        
 
         public async Task<DmSkucode> FindSkuCode(string SkuNumber)
         {

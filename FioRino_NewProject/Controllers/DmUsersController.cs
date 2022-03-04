@@ -18,7 +18,6 @@ namespace FioRino_NewProject.Controllers
     {
         private readonly IUserService _uService;
         private readonly IUserRepository _userRepository;
-        private readonly IUserAccessRepository _accessRepository;
 
         public DmUsersController(FioRinoBaseContext context, IUserRepository userReposiotory, IUserService uService, IUserRepository userRepository)
         {
@@ -71,17 +70,6 @@ namespace FioRino_NewProject.Controllers
         {
             await _uService.DeleteUser(id);
             return NoContent();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is DmUsersController controller &&
-                   EqualityComparer<IUserAccessRepository>.Default.Equals(_accessRepository, controller._accessRepository);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(_accessRepository);
         }
     }
 }

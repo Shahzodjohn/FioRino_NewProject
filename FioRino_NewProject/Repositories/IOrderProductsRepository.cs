@@ -11,5 +11,6 @@ namespace FioRino_NewProject.Responses
         Task<List<DmOrderProduct>> GetOrderProductListByGtinAsync(string Gtin);
         Task<List<DmOrderProduct>> GetOrderProductListByOrderIdAsync(int Id);
         void Delete(DmOrderProduct dmOrderProduct);
+        Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging);
     }
 }

@@ -16,25 +16,12 @@ namespace FioRino_NewProject.Controllers
         {
             _parsingProductsService = parsingProductsService;
         }
-        //[HttpGet]
-        //public async Task<IActionResult> ParsingProducts()
-        //{
-        //    var message = await _parsingProductsService.ParsingProducts();
-        //    if (message.Status == "Ok")
-        //    {
-        //        return Ok(message.Message);
-        //    }
-        //    else
-        //        return BadRequest(message.Message);
-        //    //return Ok();
-        //}
         [HttpPut("StopParsing")]
         public async Task<IActionResult> StopParsing()
         {
             await _parsingProductsService.Cancel();
             return Ok();
         }
-
         [HttpPost("LoadingProcess")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_DownloadingStatus_LoadingProcessResult>>> PostDmDownloadingStatusLoadingProcess()
         {
@@ -43,7 +30,6 @@ namespace FioRino_NewProject.Controllers
                 return await db.EXPOSE_dm_DownloadingStatus_LoadingProcessAsync /**/ ();
             }
         }
-
         [HttpPost("SuccessDate")]
         public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_DownloadingStatus_SuccessDateResult>>> PostDmDownloadingStatusSuccessDate()
         {

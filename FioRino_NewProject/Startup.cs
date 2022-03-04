@@ -52,6 +52,7 @@ namespace FioRino_NewProject
             services.AddScoped<ExcelParsingClass>();
             services.AddTransient<ParsingByDownloadingExcel>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IShoperService, ShoperService>();
             services.AddScoped<ISizeRepository, SizeRepository>();
             services.AddScoped<IStatusRepository, StatusRepository>();
             services.AddTransient<IUserAccessRepository, UserAccessRepository>();
