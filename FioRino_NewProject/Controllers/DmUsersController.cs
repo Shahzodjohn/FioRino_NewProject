@@ -1,12 +1,9 @@
 ﻿using FioRino_NewProject.AccessAttribute;
-using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
-using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -1,9 +1,7 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
-using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using FioRino_NewProject.Services;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;

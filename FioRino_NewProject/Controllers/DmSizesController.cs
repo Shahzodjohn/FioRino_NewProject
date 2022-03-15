@@ -1,5 +1,4 @@
-﻿
-using FioRino_NewProject.Model;
+﻿using FioRino_NewProject.Model;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;

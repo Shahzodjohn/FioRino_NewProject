@@ -69,25 +69,6 @@ namespace FioRino_NewProject.Controllers
             {
                 return BadRequest(new { message = "Invalid credentials" });
             }
-            #region
-            //var key = Encoding.ASCII.GetBytes("my secret key");
-
-            //    var authClaims = new List<Claim>
-            //    {
-            //        new Claim(ClaimTypes.Name, userExists.Email),
-            //        new Claim(ClaimTypes.NameIdentifier, userExists.Id.ToString()),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            //    };
-            //authClaims.Add(new Claim(ClaimTypes.Role, userRoles.ToString()));
-            //var authSigninKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            //var token = new JwtSecurityToken(
-            //    issuer: _configuration["JWT:ValidIssuer"],
-            //    audience: _configuration["JWT:ValidateAudience"],
-            //    expires: DateTime.Now.AddHours(8),
-            //    claims: authClaims,
-            //    signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256));
-            //var tokenJWT = new JwtSecurityTokenHandler().WriteToken(token);
-            #endregion
             var tokenJWT = await _service.JwtSettings(user);
             return Ok(new
             {

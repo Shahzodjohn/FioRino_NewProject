@@ -1,14 +1,5 @@
-﻿using Excel = Microsoft.Office.Interop.Excel;
-using Microsoft.AspNetCore.Mvc;
-using Spire.Xls;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.IO;
-using OfficeOpenXml;
-using System.Linq;
-using FioRino_NewProject.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 using FioRino_NewProject.Services;
 
 namespace FioRino_NewProject.Controllers

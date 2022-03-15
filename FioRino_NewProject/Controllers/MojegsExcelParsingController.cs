@@ -1,29 +1,8 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using FioRino_NewProject.Data;
-using FioRino_NewProject.Entities;
-using FioRino_NewProject.Repositories;
-using FioRino_NewProject.Responses;
-using FioRino_NewProject.Services;
-using MailChimp.Net.Core;
+﻿using FioRino_NewProject.Services;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Firefox;
-using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
-using Response = FioRino_NewProject.Responses.Response;
 
 namespace FioRino_NewProject.Controllers
 {

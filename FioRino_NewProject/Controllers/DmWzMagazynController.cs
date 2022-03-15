@@ -1,7 +1,6 @@
 ﻿using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace FioRino_NewProject.Controllers
 {
