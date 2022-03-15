@@ -61,5 +61,24 @@ namespace FioRino_NewProject.Repositories
             return findDmOrderProduct;
         }
 
+        public async Task<Response> ProductValidationForStanController(DataTransferObjects.InsertingProductsParams parameters)
+        {
+           // var SelectCurrentCategory = await _pRepository.FindCategoryAsync(parameters.UniqueProductId, parameters.CategoryId);
+            var SelectCurrentCategory = await _context.DmProducts.FirstOrDefaultAsync(x => x.UniqueProductId == parameters.UniqueProductId && x.CategoryId == parameters.CategoryId);
+            var SelectCurrentSize = await _context.DmProducts.FirstOrDefaultAsync(x => x.UniqueProductId == parameters.UniqueProductId && x.SizeId == parameters.SizeId);
+            if (SelectCurrentCategory == null && SelectCurrentSize == null)
+            {
+                return new Response { Status = "Error", Message = "Rozmiar i kategoria nie istnieją!" };
+            }
+            if (SelectCurrentSize == null)
+            {
+                return new Response { Status = "Error", Message = "Rozmiar nie istnieje!" };
+            }
+            if (SelectCurrentCategory == null)
+            {
+                return new Response { Status = "Error", Message = "Kategoria nie istnieje!" };
+            }
+            return new Response { Status = "Ok", Message = "Success!" };
+        }
     }
 }

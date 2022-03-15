@@ -16,7 +16,6 @@ namespace FioRino_NewProject.Services
     {
         private readonly FioRinoBaseContext _context;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IProductRepository _productRepository;
         private readonly IUniqueProductsRepository _uniqueProductRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly ISkuRepository _skuRepository;
@@ -28,7 +27,6 @@ namespace FioRino_NewProject.Services
         {
             _context = context;
             _categoryRepository = categoryRepository;
-            _productRepository = productRepository;
             _uniqueProductRepository = uniqueProductRepository;
             _sizeRepository = sizeRepository;
             _skuRepository = skuRepository;

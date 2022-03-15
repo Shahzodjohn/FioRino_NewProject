@@ -21,23 +21,21 @@ namespace FioRino_NewProject.Services
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ISkuRepository _skuRepository;
-        private readonly IParsingExcelService _ParsingService;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderProductsRepository _orderProductsRepository;
         private readonly IStorageRepository _storageRepository;
         private readonly ISaveRepository _save;
 
-        public ShoperService(ISizeRepository sizeRepository, IProductRepository productRepository, ICategoryRepository categoryRepository, ISkuRepository skuRepository, IParsingExcelService parsingService, IOrderRepository orderRepository, IOrderProductsRepository orderProductsRepository, IStorageRepository storageRepository, ISaveRepository save)
+        public ShoperService(ISaveRepository save, IStorageRepository storageRepository, IOrderProductsRepository orderProductsRepository, IOrderRepository orderRepository, ISkuRepository skuRepository, ICategoryRepository categoryRepository, IProductRepository productRepository, ISizeRepository sizeRepository)
         {
-            _sizeRepository = sizeRepository;
-            _productRepository = productRepository;
-            _categoryRepository = categoryRepository;
-            _skuRepository = skuRepository;
-            _ParsingService = parsingService;
-            _orderRepository = orderRepository;
-            _orderProductsRepository = orderProductsRepository;
-            _storageRepository = storageRepository;
             _save = save;
+            _storageRepository = storageRepository;
+            _orderProductsRepository = orderProductsRepository;
+            _orderRepository = orderRepository;
+            _skuRepository = skuRepository;
+            _categoryRepository = categoryRepository;
+            _productRepository = productRepository;
+            _sizeRepository = sizeRepository;
         }
 
         public async Task ShoperStartParsing(ClaimsIdentity claim)

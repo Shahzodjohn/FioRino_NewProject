@@ -30,6 +30,5 @@ namespace FioRino_NewProject.Controllers
             await _service.BrakiDrukuj(OrderId);
             return File(await System.IO.File.ReadAllBytesAsync($"wwwroot/ExcelOrderFiles/Order + {OrderId}.xlsx"), "application/octet-stream", $"Order + /{OrderId}.xlsx");
         }
-       
     }
 }

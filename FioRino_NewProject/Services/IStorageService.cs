@@ -8,8 +8,8 @@ namespace FioRino_NewProject.Services
     public interface IStorageService
     {
         Task<DmStorage> UpdatingAmountStorage(int stanId, InsertingProductsParams parameters, string Gtin);
-        Task StorageCheckPlusAmount(DmStorage StorageCheck, InsertingProductsParams parameters);
         Task<Response> MinusingAmountFromStorage(StanAmountUpdateDTO dTO);
         Task<int> DrukujCodes(int OrderId);
+        Task<Response> StorageInsertingProducts(InsertingProductsParams parameters);
     }
 }

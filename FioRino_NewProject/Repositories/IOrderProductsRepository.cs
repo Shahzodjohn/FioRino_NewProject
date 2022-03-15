@@ -1,4 +1,5 @@
-﻿using FioRino_NewProject.Entities;
+﻿using FioRino_NewProject.DataTransferObjects;
+using FioRino_NewProject.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,5 +13,6 @@ namespace FioRino_NewProject.Responses
         Task<List<DmOrderProduct>> GetOrderProductListByOrderIdAsync(int Id);
         void Delete(DmOrderProduct dmOrderProduct);
         Task<DmOrderProduct> InsertProductsToOrderProducts(int OrderId, int ProductId, int SizeId, int SkuId, int CategoryId, int productAmount, string GtinPaging);
+        Task<Response> ProductValidationForStanController(InsertingProductsParams parameters);
     }
 }

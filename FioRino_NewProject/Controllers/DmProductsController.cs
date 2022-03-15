@@ -46,7 +46,6 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 return await db.EXPOSE_dm_Products_listAsync /**/ ();
-
             }
         }
 

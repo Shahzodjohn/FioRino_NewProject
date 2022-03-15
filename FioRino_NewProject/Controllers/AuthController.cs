@@ -108,7 +108,7 @@ namespace FioRino_NewProject.Controllers
                 var response = await _service.CreatingDirectory(dto);
                 return Ok(new Response { Status = "OK", Message = $"The Photo was uploaded successfully! Its address is -> {findUser.Image}" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest(new Response { Status = "Error", Message = "Error while adding picture" });
             }

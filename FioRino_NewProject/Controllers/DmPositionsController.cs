@@ -16,7 +16,6 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 return await db.EXPOSE_dm_Positions_ListAsync /**/ ();
-
             }
         }
     }

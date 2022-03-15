@@ -1,5 +1,6 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.Repositories;
+using FioRino_NewProject.Responses;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,21 +15,22 @@ namespace FioRino_NewProject.Services
 {
     public class BrakiService : IBrakiService
     {
-        private readonly FioRinoBaseContext _context;
+        private readonly IOrderProductsRepository _opRepository;
         private readonly IWebHostEnvironment _environment;
         private readonly ISkuRepository _skuRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly ISizeRepository _sizeRepository;
         private readonly IProductRepository _productRepository;
 
-        public BrakiService(IWebHostEnvironment environment, FioRinoBaseContext context, ISkuRepository skuRepository, ICategoryRepository categoryRepository, ISizeRepository sizeRepository, IProductRepository productRepository)
+        public BrakiService(IWebHostEnvironment environment, FioRinoBaseContext context, ISkuRepository skuRepository, ICategoryRepository categoryRepository, ISizeRepository sizeRepository, IProductRepository productRepository, IOrderProductsRepository opRepository)
         {
             _environment = environment;
-            _context = context;
+
             _skuRepository = skuRepository;
             _categoryRepository = categoryRepository;
             _sizeRepository = sizeRepository;
             _productRepository = productRepository;
+            _opRepository = opRepository;
         }
         public async Task<int> BrakiDrukuj(int OrderId)
         {
@@ -42,26 +44,9 @@ namespace FioRino_NewProject.Services
             var newFile = $@"{rootPath}/Order + {OrderId}.xlsx";
             Aspose.Cells.Workbook workBook = new Aspose.Cells.Workbook(FilePath);
             Aspose.Cells.Worksheet workSheet = workBook.Worksheets[0];
-            var FindOrderProduct = await _context.DmOrderProducts.Where(x => x.OrderId == OrderId).ToListAsync();
+            var FindOrderProduct = await _opRepository.GetOrderProductListByOrderIdAsync(OrderId);
+            //var FindOrderProduct = await _context.DmOrderProducts.Where(x => x.OrderId == OrderId).ToListAsync();
             int column = 9;
-            #region Sizes
-            //var S = workSheet.Cells[8, 3].StringValue/*.Replace("             18/19","").Trim()*/;
-            //var M = workSheet.Cells[8, 4].StringValue/*.Replace("   20", "").Trim()*/;
-            //var L = workSheet.Cells[8, 5].StringValue/*.Replace("    21/22", "").Trim()*/;
-            //var XL = workSheet.Cells[8, 6].StringValue/*.Replace("   23/24", "").Trim()*/;
-            //var TwoXL = workSheet.Cells[8, 7].StringValue/*.Replace("L   25/26", "").Trim()*/;
-            //var ThreeXl = workSheet.Cells[8, 8].StringValue/*.Replace("    27", "").Trim()*/;
-            //var FourXl = workSheet.Cells[8, 9].StringValue/*.Replace("    28/29", "").Trim()*/;
-            //var FiveXl = workSheet.Cells[8, 10].StringValue/*.Replace("   30", "").Trim()*/;
-            //var SixXl = workSheet.Cells[8, 11].StringValue/*.Replace("  31/32", "").Trim()*/;
-            //var SevenXl = workSheet.Cells[8, 12].StringValue/*.Replace("   33/34", "").Trim()*/;
-            //var EightXl = workSheet.Cells[8, 13].StringValue/*.Replace("   35/36", "").Trim()*/;
-            //var NineXl = workSheet.Cells[8, 14].StringValue;
-            //var TenXl = workSheet.Cells[8, 15].StringValue;
-            //var ElevenXl = workSheet.Cells[8, 16].StringValue;
-            //var TwelveXl = workSheet.Cells[8, 17].StringValue;
-            //var BRAK = workSheet.Cells[8, 18].StringValue;
-            #endregion
             foreach (var Product in FindOrderProduct)
             {
                 var S = workSheet.Cells[column, 3];

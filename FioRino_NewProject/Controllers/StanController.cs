@@ -14,63 +14,31 @@ namespace FioRino_NewProject.Controllers
     [ApiController]
     public class StanController : ControllerBase
     {
-        private readonly IWebHostEnvironment _environment;
-        private readonly IOrderProductsService _opService;
-        private readonly IStorageRepository _storageRepository;
-        private readonly IProductRepository _pRepository;
         private readonly IStorageService _storageService;
 
-        public StanController(IWebHostEnvironment environment, IOrderProductsService opService, IStorageRepository storageRepository, IStorageService storageService, IProductRepository pRepository)
+        public StanController(IStorageService storageService)
         {
-            _environment = environment;
-            _opService = opService;
-            _storageRepository = storageRepository;
             _storageService = storageService;
-            _pRepository = pRepository;
         }
-        public class listParams
-        {
-            public string SearchString { get; set; }
-        }
-
         [HttpGet("list")]
-        public async Task<ActionResult> PostDmStoragelist([FromQuery] listParams parameters)
+        public async Task<ActionResult> PostDmStoragelist([FromQuery] string SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var list = await db.EXPOSE_dm_Storage_listAsync /**/ (parameters.SearchString);
+                var list = await db.EXPOSE_dm_Storage_listAsync /**/ (SearchString);
                 return Ok(list);
             }
         }
         [HttpPost("InsertingProducts")]
         public async Task<ActionResult> PostDmStorageInsertingproducts([FromBody] InsertingProductsParams parameters)
         {
-            using (SPToCoreContext db = new SPToCoreContext())
+            var actionStorage = await _storageService.StorageInsertingProducts(parameters);
+            if (actionStorage.Status == "Error")
             {
-                var SelectingcurrentProduct = await _pRepository.FindProductByParams(parameters.UniqueProductId, parameters.CategoryId, parameters.SizeId);
-                var productValidation = await _opService.ProductValidationForStanController(parameters);
-                if (productValidation.Status == "Error")
-                {
-                    return BadRequest(productValidation.Message);
-                }
-                parameters.ProductId = SelectingcurrentProduct.Id;
-                var StorageCheck = await _storageRepository.FindFromStorageByGtinAsync(SelectingcurrentProduct.Gtin);
-                if (SelectingcurrentProduct != null && StorageCheck == null)
-                {
-                    int? stanId = 0;
-                    db.EXPOSE_dm_Storage_Insertingproducts /**/ (parameters.UniqueProductId, parameters.SkuCodeId, parameters.ProductId, parameters.CategoryId, parameters.SizeId, parameters.Amount, ref stanId);
-                    var findFromStan = await _storageService.UpdatingAmountStorage(stanId ?? 0, parameters, SelectingcurrentProduct.Gtin);
-                    if (findFromStan == null)
-                    {
-                        return BadRequest(new Response { Status = "Error", Message = "Ten produkt jest już w magazynie!" });
-                    }
-                }
-                else if (StorageCheck != null)
-                {
-                    await _storageService.StorageCheckPlusAmount(StorageCheck, parameters);
-                }
-                return Ok();
+                return BadRequest(actionStorage.Message);
             }
+            return Ok(new Response { Status = "OK", Message = "Success!" });
+            
         }
         [HttpPut("MinusingAmount")]
         public async Task<IActionResult> MinusingAmount(StanAmountUpdateDTO dTO)
@@ -101,12 +69,11 @@ namespace FioRino_NewProject.Controllers
         public class BlockListParams { public string SearchString { get; set; } }
 
         [HttpGet("BlockList")]
-        public async Task<ActionResult> PostDmStorageBlockList([FromQuery] BlockListParams parameters)
+        public async Task<ActionResult> PostDmStorageBlockList([FromQuery] string SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var list = await db.EXPOSE_dm_Storage_BlockListAsync /**/ (parameters.SearchString);
-
+                var list = await db.EXPOSE_dm_Storage_BlockListAsync /**/ (SearchString);
                 return Ok(list);
             }
         }

@@ -16,21 +16,15 @@ namespace FioRino_NewProject.Controllers
     [ApiController]
     public class DmOrdersController : ControllerBase
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly ISaveRepository _save;
         private readonly IOrderProductsService _orderProductService;
         private readonly IOrderService _oService;
         private readonly IUserRepository _repository;
         private readonly IRegisterService _service;
 
-        public DmOrdersController(IOrderRepository oRepository, ISaveRepository save, IOrderService oService, IOrderProductsService orderProductService, IUserRepository userRepository, IUserRepository repository, IRegisterService service)
+        public DmOrdersController(IOrderProductsService orderProductService, IOrderService oService, IUserRepository repository, IRegisterService service)
         {
-            _orderRepository = oRepository;
-            _save = save;
-            _oService = oService;
             _orderProductService = orderProductService;
-            _userRepository = userRepository;
+            _oService = oService;
             _repository = repository;
             _service = service;
         }
@@ -41,82 +35,67 @@ namespace FioRino_NewProject.Controllers
             using (SPToCoreContext db = new SPToCoreContext())
             {
                 return await db.EXPOSE_dm_Orders_AmountAsync /**/ ();
-
             }
         }
-        public class MagazynListParams { public int SearchString { get; set; } }
 
         [HttpGet("MagazynList")]
         [Authorize("MagazynAccess")]
-        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_MagazynListResult>>> PostDmOrdersMagazynList([FromQuery] MagazynListParams parameters)
+        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_MagazynListResult>>> PostDmOrdersMagazynList([FromQuery] int SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var MagazynListAsync = await db.EXPOSE_dm_Orders_MagazynListAsync /**/ (parameters.SearchString);
+                var MagazynListAsync = await db.EXPOSE_dm_Orders_MagazynListAsync /**/ (SearchString);
                 return MagazynListAsync;
             }
         }
-        public class ListParams { public int SearchString { get; set; } }
-        //// EXPOSE_dm_Orders_List
-
+        
         [HttpGet("List")]
         [Authorize("HurtAccess")]
-        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ListResult>>> PostDmOrdersList([FromQuery] ListParams parameters)
+        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ListResult>>> PostDmOrdersList([FromQuery] int SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var Orders_ListAsync = await db.EXPOSE_dm_Orders_ListAsync /**/ (parameters.SearchString);
+                var Orders_ListAsync = await db.EXPOSE_dm_Orders_ListAsync /**/ (SearchString);
                 return Orders_ListAsync;
             }
         }
-        public class ArchiveListParams { public int SearchString { get; set; } }
-        // EXPOSE_dm_Orders_ArchiveList
+       
         [HttpGet("ArchiveList")]
         [Authorize("ArchiveAccess")]
-        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ArchiveListResult>>> PostDmOrdersArchiveList([FromQuery] ArchiveListParams parameters)
+        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_ArchiveListResult>>> PostDmOrdersArchiveList([FromQuery] int SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var Archive = await db.EXPOSE_dm_Orders_ArchiveListAsync /**/ (parameters.SearchString);
+                var Archive = await db.EXPOSE_dm_Orders_ArchiveListAsync /**/ (SearchString);
                 return Archive;
             }
         }
-        public class UpdateIsInMagazynTrueParams { public int OrderId { get; set; } }
-        // EXPOSE_dm_Orders_UpdateIsInMagazynTrue
 
         [HttpPut("UpdateIsInMagazynTrue")]
-        public async Task<ActionResult> PostDmOrdersUpdateIsInMagazynTrue([FromBody] UpdateIsInMagazynTrueParams parameters)
+        public async Task<ActionResult> PostDmOrdersUpdateIsInMagazynTrue([FromBody] int OrderId)
         {
-            using (SPToCoreContext db = new SPToCoreContext())
-            {
-                var findOrder = await _orderRepository.FindOrder(parameters.OrderId);
-                findOrder.OrderStatusId = 1;
-                db.EXPOSE_dm_Orders_UpdateIsInMagazynTrue /**/ (parameters.OrderId);
-                await _save.SaveAsync();
-                return Ok();
-            }
+            await _oService.OrdersUpdateIsInMagazynTrue(OrderId);
+            return Ok();
         }
-        public class SendToArchivumParams { public int OrderId { get; set; } }
-        // EXPOSE_dm_Orders_SendToArchivum
 
         [HttpPost("SendToArchivum")]
-        public async Task<ActionResult> PostDmOrdersSendToArchivum([FromBody] SendToArchivumParams parameters)
+        public async Task<ActionResult> PostDmOrdersSendToArchivum([FromBody]int OrderId)
         {
-            using (SPToCoreContext db = new SPToCoreContext())
+            var responseMessage = await _orderProductService.PostDmOrdersSendToArchivum(OrderId);
+            if (responseMessage.Status == "Ok")
             {
-                await _orderProductService.ManagingStatusesForArchive(parameters.OrderId);
-                db.EXPOSE_dm_Orders_SendToArchivum /**/ (parameters.OrderId);
-                await _save.SaveAsync();
-                return Ok();
+                return Ok(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
             }
+            else
+                return BadRequest(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
         }
         public class SelectFromArchivumParams { public int SearchString { get; set; } }
         [HttpGet("SelectFromArchivum")]
-        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_SelectFromArchivumResult>>> PostDmOrdersSelectFromArchivum([FromQuery] SelectFromArchivumParams parameters)
+        public async Task<ActionResult<List<SPToCoreContext.EXPOSE_dm_Orders_SelectFromArchivumResult>>> PostDmOrdersSelectFromArchivum([FromQuery] int SearchString)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                return await db.EXPOSE_dm_Orders_SelectFromArchivumAsync /**/ (parameters.SearchString);
+                return await db.EXPOSE_dm_Orders_SelectFromArchivumAsync /**/ (SearchString);
             }
         }
         [HttpDelete("{id}")]
@@ -139,17 +118,13 @@ namespace FioRino_NewProject.Controllers
         [HttpPost("CreateOrder")]
         public async Task<ActionResult> PostDmOrdersCreateOrder([FromBody] CreateOrderParams parameters)
         {
-            using (SPToCoreContext db = new SPToCoreContext())
+            var responseMessage = await _oService.PostDmOrdersCreateOrder(parameters);
+            if (responseMessage.Status == "Ok")
             {
-                int? orderId = 0;
-                var findUser = await _userRepository.GetUser(parameters.SenderId);
-                parameters.OrderExecutor = "FIORINO Izabela Gądek-Pagacz"; parameters.SourceOfOrder = "Utworzone ręcznie"; parameters.Is_InMagazyn = false;
-                parameters.SenderName = findUser.FirstName + " " + findUser.LastName;
-                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt, parameters.UpdatedAt, parameters.OrderStatusId, parameters.Is_InMagazyn, parameters.SourceOfOrder,
-                parameters.OrderExecutor, parameters.SenderName, ref orderId);
-                await _save.SaveAsync();
-                return Ok(new Response { Message = "OK", Status = "OrderId = " + orderId.ToString() });
+                return Ok(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
             }
+            else
+                return BadRequest(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
         }
         [HttpPost("SelectingAllNewOrders")]
         [Authorize("HurtAccess")]

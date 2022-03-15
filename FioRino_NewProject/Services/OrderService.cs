@@ -1,6 +1,7 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
+using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,15 @@ namespace FioRino_NewProject.Services
         private readonly IOrderRepository _oRepository;
         private readonly IOrderProductsRepository _opRepository;
         private readonly IStorageRepository _storageRepository;
+        private readonly IUserRepository _userRepository;
 
-        public OrderService(FioRinoBaseContext context, IOrderRepository oRepository, IStorageRepository storageRepository, IOrderProductsRepository opRepository)
+        public OrderService(FioRinoBaseContext context, IOrderRepository oRepository, IStorageRepository storageRepository, IOrderProductsRepository opRepository, IUserRepository userRepository)
         {
             _context = context;
             _oRepository = oRepository;
             _storageRepository = storageRepository;
             _opRepository = opRepository;
+            _userRepository = userRepository;
         }
 
 
@@ -76,6 +79,31 @@ namespace FioRino_NewProject.Services
             return new Response { Status = "Ok", Message = "Success!" };
         }
 
+        public async Task OrdersUpdateIsInMagazynTrue(int OrderId)
+        {
+            using (SPToCoreContext db = new SPToCoreContext())
+            {
+                var findOrder = await _oRepository.FindOrder(OrderId);
+                findOrder.OrderStatusId = 1;
+                db.EXPOSE_dm_Orders_UpdateIsInMagazynTrue /**/ (OrderId);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<Response> PostDmOrdersCreateOrder(CreateOrderParams parameters)
+        {
+            int? orderId = 0;
+            var findUser = await _userRepository.GetUser(parameters.SenderId);
+            parameters.OrderExecutor = "FIORINO Izabela Gądek-Pagacz"; parameters.SourceOfOrder = "Utworzone ręcznie"; parameters.Is_InMagazyn = false;
+            parameters.SenderName = findUser.FirstName + " " + findUser.LastName;
+            using (SPToCoreContext db = new SPToCoreContext())
+            {
+                db.EXPOSE_dm_Orders_CreateOrder /**/ (parameters.CreatedAt, parameters.UpdatedAt, parameters.OrderStatusId, parameters.Is_InMagazyn, parameters.SourceOfOrder,
+                parameters.OrderExecutor, parameters.SenderName, ref orderId);
+            }
+            await _context.SaveChangesAsync();
+            return new Response { Message = "OK", Status = "OrderId = " + orderId.ToString() };
+        }
         public async Task<DmOrder> UpdateProductDetails(string OrderExecutor, int SenderId, DateTime CreatedAt, int OrderId)
         {
             var find = await _oRepository.FindOrder(OrderId);

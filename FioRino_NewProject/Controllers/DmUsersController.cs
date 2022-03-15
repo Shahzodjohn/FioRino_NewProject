@@ -16,24 +16,21 @@ namespace FioRino_NewProject.Controllers
     [ApiController]
     public class DmUsersController : ControllerBase
     {
-        private readonly IUserService _uService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserService _userService;
 
-        public DmUsersController(FioRinoBaseContext context, IUserRepository userReposiotory, IUserService uService, IUserRepository userRepository)
+        public DmUsersController(IUserService userService)
         {
-            _uService = uService;
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpPut("UpdateUsersById")]
         public async Task<IActionResult> UpdateUsersById(int id, UpdateUserDTO dmUsers)
         {
-            var find = await _uService.CheckValidityEmail(id, dmUsers);
+            var find = await _userService.CheckValidityEmail(id, dmUsers);
             if (find.Status == "Error")
             {
                 return BadRequest(new Response { Status = "Error", Message = $"{find.Message}" });
             }
-            //await _uService.UpdateUserById(id, dmUsers);
             return NoContent();
         }
 
@@ -68,7 +65,7 @@ namespace FioRino_NewProject.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDmUsers(int id)
         {
-            await _uService.DeleteUser(id);
+            await _userService.DeleteUser(id);
             return NoContent();
         }
     }

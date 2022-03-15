@@ -10,5 +10,7 @@ namespace FioRino_NewProject.Services
     {
         Task<Response> DeleteDmOrders(int Id, UserDTO userInfo);
         Task<DmOrder> UpdateProductDetails(string OrderExecutor, int SenderId, DateTime CreatedAt, int OrderId);
+        Task OrdersUpdateIsInMagazynTrue(int OrderId);
+        Task<Response> PostDmOrdersCreateOrder(CreateOrderParams parameters);
     }
 }

@@ -35,9 +35,8 @@ namespace FioRino_NewProject
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRegisterService, RegisterService>();
             services.AddScoped<ISaveRepository, SaveRepository>();
-            services.AddScoped<IParsingExcelService, ParsingExcelSevice>();
             services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IOrderProductsService, OrderProductsService>();
+            services.AddScoped<IOrderProductsService, OrderProductService>();
             services.AddScoped<IOrderProductsRepository, OrderProductRepository>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStorageRepository, StorageRepository>();
@@ -49,7 +48,9 @@ namespace FioRino_NewProject
             services.AddScoped<ISkuRepository, SkuRepository>();
             services.AddScoped<ParsingProductsService>();
             services.AddScoped<IBrakiService, BrakiService>();
+            services.AddScoped<UploadingExcelService>();
             services.AddScoped<ExcelParsingClass>();
+            services.AddScoped<OrderProductService>();
             services.AddTransient<ParsingByDownloadingExcel>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IShoperService, ShoperService>();
@@ -112,7 +113,6 @@ namespace FioRino_NewProject
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //if (env.IsDevelopment())
@@ -122,7 +122,6 @@ namespace FioRino_NewProject
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FioRino_NewProject v1"));
             //}
 
-            //app.UseHttpsRedirection();
             app.UseCors(x => x
                 .SetIsOriginAllowed(origin => true)
                 .AllowAnyOrigin()

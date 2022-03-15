@@ -1,6 +1,7 @@
 ﻿using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Entities;
+using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
 using Microsoft.AspNetCore.Hosting;
@@ -23,14 +24,18 @@ namespace FioRino_NewProject.Services
         private readonly IStorageRepository _storageReposioty;
         private readonly IOrderProductsRepository _OrderProductRepository;
         private readonly FioRinoBaseContext _context;
+        private readonly IProductRepository _pRepository; 
         private readonly IWebHostEnvironment _environment;
+        private readonly IStorageRepository _storageRepository;
 
-        public StorageService(IStorageRepository storageReposioty, IOrderProductsRepository orderProductRepository, FioRinoBaseContext context, IWebHostEnvironment environment)
+        public StorageService(IStorageRepository storageReposioty, IOrderProductsRepository orderProductRepository, FioRinoBaseContext context, IWebHostEnvironment environment, IProductRepository pPepository, IStorageRepository storageRepository)
         {
             _storageReposioty = storageReposioty;
             _OrderProductRepository = orderProductRepository;
             _context = context;
             _environment = environment;
+            _pRepository = pPepository;
+            _storageRepository = storageRepository;
         }
         public async Task<Response> MinusingAmountFromStorage(StanAmountUpdateDTO dTO)
         {
@@ -51,12 +56,7 @@ namespace FioRino_NewProject.Services
             return new Response { Status = "OK", Message = "Success!" };
         }
 
-        public async Task StorageCheckPlusAmount(DmStorage StorageCheck, InsertingProductsParams parameters)
-        {
-            StorageCheck.Amount = StorageCheck.Amount + parameters.Amount;
-            StorageCheck.AmountLeft = StorageCheck.AmountLeft + parameters.Amount;
-            await _context.SaveChangesAsync();
-        }
+        
 
         public async Task<DmStorage> UpdatingAmountStorage(int stanId, InsertingProductsParams parameters, string Gtin)
         {
@@ -205,7 +205,61 @@ namespace FioRino_NewProject.Services
             { fs.Write(archiveFile, 0, archiveFile.Length); }
             return OrderId;
         }
-        
+
+        public async Task<Response> StorageInsertingProducts(InsertingProductsParams parameters)
+        {
+            var SelectingcurrentProduct = await _pRepository.FindProductByParams(parameters.UniqueProductId, parameters.CategoryId, parameters.SizeId);
+            var productValidation = await _OrderProductRepository.ProductValidationForStanController(parameters);
+            if (productValidation.Status == "Error")
+            {
+                return new Response { Status = "Error", Message = $"{productValidation.Message}" };
+            }
+            parameters.ProductId = SelectingcurrentProduct.Id;
+            var StorageCheck = await _storageRepository.FindFromStorageByGtinAsync(SelectingcurrentProduct.Gtin);
+            if (SelectingcurrentProduct != null && StorageCheck == null)
+            {
+                int? stanId = 0;
+                using (SPToCoreContext db = new SPToCoreContext())
+                {
+                    db.EXPOSE_dm_Storage_Insertingproducts /**/ (parameters.UniqueProductId, parameters.SkuCodeId, parameters.ProductId, parameters.CategoryId, parameters.SizeId, parameters.Amount, ref stanId);
+                }
+                var findFromStan = await _storageReposioty.FindFromStorageByIdAsync(stanId ?? 0);
+                findFromStan.Gtin = SelectingcurrentProduct.Gtin;
+                var OrderProductId = await _OrderProductRepository.GetOrderProductListByGtinAsync(SelectingcurrentProduct.Gtin);
+                findFromStan.AmountLeft = parameters.Amount;
+                await _context.SaveChangesAsync();
+
+                foreach (var item in OrderProductId)
+                {
+                    var Order = await _context.DmOrders.FirstOrDefaultAsync(x => x.Id == item.OrderId);
+                    if (Order.IsInArchievum != true)
+                    {
+                        if (findFromStan.AmountLeft > item.Amount)
+                        {
+                            item.ProductStatusesId = 2;
+                            findFromStan.AmountLeft = findFromStan.AmountLeft - item.Amount;
+                        }
+                        if (findFromStan.AmountLeft < item.Amount)
+                        {
+                            item.ProductStatusesId = 1;
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
+                if (findFromStan == null)
+                {
+                    return new Response { Status = "Error", Message = "Ten produkt jest już w magazynie!" };
+                }
+            }
+            else if (StorageCheck != null)
+            {
+                StorageCheck.Amount = StorageCheck.Amount + parameters.Amount;
+                StorageCheck.AmountLeft = StorageCheck.AmountLeft + parameters.Amount;
+                await _context.SaveChangesAsync();
+            }
+            return new Response { Status = "Ok", Message = "Success" };
+        }
     }
     
 
