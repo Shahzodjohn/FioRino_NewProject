@@ -21,15 +21,11 @@ namespace FioRino_NewProject.Controllers
     {
         private readonly IUserRepository _repository;
         private readonly IRegisterService _service;
-        private readonly IConfiguration _configuration;
         private readonly IMailService _mailservice;
-
-
-        public AuthController(IUserRepository repository, IRegisterService service, IWebHostEnvironment environment, IConfiguration configuration, IMailService mailservice)
+        public AuthController(IUserRepository repository, IRegisterService service, IWebHostEnvironment environment, IMailService mailservice)
         {
             _repository = repository;
             _service = service;
-            _configuration = configuration;
             _mailservice = mailservice;
         }
 

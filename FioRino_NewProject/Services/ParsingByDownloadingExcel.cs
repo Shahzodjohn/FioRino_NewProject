@@ -32,7 +32,7 @@ namespace FioRino_NewProject.Services
         public async Task DownloadZip()
         {
             var rootPath = _environment.WebRootPath;
-           // var zipDirectory = rootPath + "\\Zips";
+            //var zipDirectory = rootPath + "\\Zips";
            var zipDirectory = rootPath + "/Zips/";
   
             var originalEntity = await _statusRepository.GetFirst();
@@ -70,22 +70,23 @@ namespace FioRino_NewProject.Services
 
             element = driver.FindElement(By.Id("CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"));
             element.Click();
-            element = driver.FindElement(By.XPath("//*[@id='CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll']"));
-            //await Task.Delay(1000);
+            element = driver.FindElement(By.XPath("//*[@id='loginContextForm']/div[1]/div[1]/label"));
             element.Click();
+            element = driver.FindElement(By.XPath("//*[@id='loginSubmit']"));
+            element.Click();
+     
             driver.Navigate().GoToUrl("https://mojegs1.pl/moje-produkty");
-
 
             element = driver.FindElement(By.Id("productsListExportBtn"));
             element.Click();
             element = driver.FindElement(By.XPath("//*[@id='exportProductsForm']/div[2]/div/div/div[3]/label"));
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             element.Click();
-
+            
             element = driver.FindElement(By.Id("productsListExportModalAcceptBtn"));
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             element.Click();
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
 
             int num = 0;
 
@@ -118,7 +119,6 @@ namespace FioRino_NewProject.Services
             
             return new Responses.Response { Status = "Ok" };
         }
-        //[HttpGet("GetProductAmount")]
         public int GetProductAmount()
         {
             using var client = new HttpClient();
@@ -128,7 +128,6 @@ namespace FioRino_NewProject.Services
             var UrlAddressClientRequest = new RestRequest(Method.GET);
             IRestResponse UrlAddressClientResponse = UrlAddressClient.Execute(UrlAddressClientRequest);
             web.LoadHtml(UrlAddressClientResponse.Content);
-            //var cookieId = UrlAddressClientResponse.Headers[4].Value;
             var cookieName = UrlAddressClientResponse.Cookies[2].Name;
             var CookieValue = UrlAddressClientResponse.Cookies[2].Value;
             var xtokenpath = "//div/form/input[@name='_token' and @type='hidden']";
@@ -143,38 +142,51 @@ namespace FioRino_NewProject.Services
             {
                 PostRequest.AddCookie(cookie.Name, cookie.Value);
             }
-            PostRequest.AddParameter("_token", CookieAuthorizingValue);
             PostRequest.AddParameter("email", "tomek@fiorino.eu");
             PostRequest.AddParameter("password", "Epoka1-wsx");
+            PostRequest.AddParameter("_token", CookieAuthorizingValue);
             IRestResponse PostResponse = PostClient.Execute(PostRequest);
-            var xrf = PostResponse.Cookies[0].Value;
-            var laravelsession = PostResponse.Cookies[1].Value;
-            var rs = PostResponse.Headers[4].Value;
             web.LoadHtml(PostResponse.Content);
-            var RstClientNew = new RestClient($"https://mojegs1.pl/moje-produkty");
-            RstClientNew.Timeout = -1;
-            var RestRequestNew = new RestRequest(Method.GET);
-            RestRequestNew.AddHeader("Cookie", $"XSRF-TOKEN={xrf}; laravel_session={laravelsession}");
-            IRestResponse rsponseCookie = RstClientNew.Execute(RestRequestNew);
-            web.LoadHtml(rsponseCookie.Content);
+
+            var ChoiceClient = new RestClient("https://mojegs1.pl/logowanie/wybor-firmy");
+            ChoiceClient.Timeout = -1;
+            var ChoiceRequest = new RestRequest(Method.POST);
+            foreach (var cookie in PostResponse.Cookies)
+            {
+                ChoiceRequest.AddCookie(cookie.Name, cookie.Value);
+            }
+            ChoiceRequest.AlwaysMultipartFormData = true;
+            ChoiceRequest.AddParameter("company", "62736");
+            ChoiceRequest.AddParameter("_token", CookieAuthorizingValue);
+            IRestResponse ChoiceResponse = ChoiceClient.Execute(ChoiceRequest);
+            Console.WriteLine(ChoiceResponse.Content);
+
+            var xrf = ChoiceResponse.Cookies[0].Value; 
+            var laravelsession = ChoiceResponse.Cookies[1].Value;
+
+            var ProductListClient = new RestClient($"https://mojegs1.pl/moje-produkty");
+            ProductListClient.Timeout = -1;
+            var ProductListRequest = new RestRequest(Method.GET);
+            ProductListRequest.AddHeader("Cookie", $"XSRF-TOKEN={xrf}; laravel_session={laravelsession}");
+            
+            IRestResponse ProductListResponce = ProductListClient.Execute(ProductListRequest);
+            web.LoadHtml(ProductListResponce.Content);
+
             var pageFind = "//div[@class='form-group']";
             var page = web.DocumentNode.SelectNodes(pageFind).ToList();
-
             string CurrentAmountString = Regex.Match(page[2].InnerHtml, @"\d+").Value;
-
             int TotalAmount = 0;
             var TotalAmountString = page[2].InnerHtml.Replace($"\n            <br>\n            (1-50\n            z\n            ", "").Replace(")\n        ", "");
             Int32.TryParse(TotalAmountString, out TotalAmount);
             return TotalAmount;
-            //await ZipStatusCheck(TotalAmount);
-        } // returns totalAmount
+        } 
 
 
         public async Task ZipStatusCheck(int TotalAmount)
         {
             var rootPath = _environment.WebRootPath;
-            var ZipPath = rootPath + "/Zips/";
-            //var ZipPath = rootPath + "\\Zips";
+            //var ZipPath = rootPath + "/Zips/";
+            var ZipPath = rootPath + "\\Zips";
             int num = 0;
             for (int i = 0 ; ; i++)
             {
@@ -208,8 +220,10 @@ namespace FioRino_NewProject.Services
                 //await ExcelFileCheck(ZipPath);
                 return (ZipPath, TotalAmount);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ex.InnerException.ToString();
+                ex.Message.ToString();
                 return (ZipPath, TotalAmount);
             }
         }

@@ -70,11 +70,11 @@ namespace FioRino_NewProject.Controllers
                 return Archive;
             }
         }
-
+        public class OrderParameterDTO { public int OrderId { get; set; } }
         [HttpPut("UpdateIsInMagazynTrue")]
-        public async Task<ActionResult> PostDmOrdersUpdateIsInMagazynTrue([FromBody] int OrderId)
+        public async Task<ActionResult> PostDmOrdersUpdateIsInMagazynTrue([FromBody] OrderParameterDTO dto)
         {
-            await _oService.OrdersUpdateIsInMagazynTrue(OrderId);
+            await _oService.OrdersUpdateIsInMagazynTrue(dto.OrderId);
             return Ok();
         }
 
@@ -119,7 +119,7 @@ namespace FioRino_NewProject.Controllers
         public async Task<ActionResult> PostDmOrdersCreateOrder([FromBody] CreateOrderParams parameters)
         {
             var responseMessage = await _oService.PostDmOrdersCreateOrder(parameters);
-            if (responseMessage.Status == "Ok")
+            if (responseMessage.Status == "OK")
             {
                 return Ok(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
             }

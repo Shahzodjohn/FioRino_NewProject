@@ -47,7 +47,6 @@ namespace FioRino_NewProject.Services
             var findbyId = await _userRepository.GetUser(id);
             if (findUser == null || findUser.Email == findbyId.Email)
             {
-
                 var currentUser = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id == id);
                 var findUserAccess = await _context.DmUsersAccesses.FirstOrDefaultAsync(x => x.UserId == id);
                 currentUser.FirstName = dmUsers.FirstName;

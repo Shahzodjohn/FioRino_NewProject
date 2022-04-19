@@ -42,7 +42,7 @@ namespace FioRino_NewProject.Controllers
                     MemoryStream ms = new MemoryStream(bytes);
                     await _excelParsingClass.ExcelParsingFromMojegs(ms, filePath, TotalAmount);
                 }
-                return BadRequest(status.Status);
+                return Ok(status.Status);
             }
             else
                 return BadRequest(status.Message.ToString());

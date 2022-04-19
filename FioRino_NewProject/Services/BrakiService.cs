@@ -490,8 +490,8 @@ namespace FioRino_NewProject.Services
         private void DeleteWorkSheet(string Route)
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
-            FileInfo file = new FileInfo(Route);
-            using (ExcelPackage exPackage = new ExcelPackage(file))
+            FileInfo file = new(Route);
+            using (ExcelPackage exPackage = new(file))
             {
                 ExcelWorksheet excelWorksheet = exPackage.Workbook.Worksheets[1];
                 exPackage.Workbook.Worksheets.Delete(excelWorksheet);

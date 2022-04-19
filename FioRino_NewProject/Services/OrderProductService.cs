@@ -86,7 +86,7 @@ namespace FioRino_NewProject.Services
                 var findDmOrderProduct = await _opRepository.GetOrderProductAsync(OrderProductId ?? 0);
                 findDmOrderProduct.Gtin = SelectingcurrentProduct.Gtin;
                 //var findOrder = await _orderService.FindOrder(parameters.OrderId);
-                var findOrder = await _orderRepository.FindOrder(parameters.OrderProductId);
+                var findOrder = await _orderRepository.FindOrder(parameters.OrderId);
                 findOrder.Amount = parameters.Amount;
                 //var findProduct = await _productService.FindProductAsync(parameters.ProductId);
                 var findProduct = await _pRepository.FindProductByIdAsync(parameters.ProductId);

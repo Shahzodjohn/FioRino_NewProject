@@ -102,7 +102,7 @@ namespace FioRino_NewProject.Services
                 parameters.OrderExecutor, parameters.SenderName, ref orderId);
             }
             await _context.SaveChangesAsync();
-            return new Response { Message = "OK", Status = "OrderId = " + orderId.ToString() };
+            return new Response { Status = "OK", Message = "OrderId = " + orderId.ToString() };
         }
         public async Task<DmOrder> UpdateProductDetails(string OrderExecutor, int SenderId, DateTime CreatedAt, int OrderId)
         {
