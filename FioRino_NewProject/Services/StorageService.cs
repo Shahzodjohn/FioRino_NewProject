@@ -139,21 +139,30 @@ namespace FioRino_NewProject.Services
             PostRequest.AddParameter("email", "tomek@fiorino.eu");
             PostRequest.AddParameter("password", "Epoka1-wsx");
             IRestResponse PostResponse = PostClient.Execute(PostRequest);
-            var xrf = PostResponse.Cookies[0].Value;
-            var laravelsession = PostResponse.Cookies[1].Value;
             web.LoadHtml(PostResponse.Content);
+            var ChoiceClient = new RestClient("https://mojegs1.pl/logowanie/wybor-firmy");
+            ChoiceClient.Timeout = -1;
+            var ChoiceRequest = new RestRequest(Method.POST);
+            foreach (var cookie in PostResponse.Cookies)
+            {
+                ChoiceRequest.AddCookie(cookie.Name, cookie.Value);
+            }
+            ChoiceRequest.AlwaysMultipartFormData = true;
+            ChoiceRequest.AddParameter("company", "62736");
+            ChoiceRequest.AddParameter("_token", CookieAuthorizingValue);
+            IRestResponse ChoiceResponse = ChoiceClient.Execute(ChoiceRequest);
+            Console.WriteLine(ChoiceResponse.Content);
+
             var findOrderProducts = await _OrderProductRepository.GetOrderProductListByOrderIdAsync(OrderId);
             var Images = new List<MemoryStream>();
+            var xrf = ChoiceResponse.Cookies[0].Value;
+            var laravelsession = ChoiceResponse.Cookies[1].Value;
             foreach (var gtinAddress in findOrderProducts)
             {
                 var restclient = new RestClient($"https://mojegs1.pl/moje-produkty/drukuj-etykiete/{gtinAddress.Gtin}");
                 restclient.Timeout = -1;
                 var restrequest = new RestRequest(Method.GET);
                 restrequest.AddHeader("Cookie", $"XSRF-TOKEN={xrf}; laravel_session={laravelsession}");
-                foreach (var cookie in PostResponse.Cookies)
-                {
-                    PostRequest.AddCookie(cookie.Name, cookie.Value);
-                }
                 IRestResponse restresponse = restclient.Execute(restrequest);
                 Console.WriteLine(restresponse.Content);
                 web.LoadHtml(restresponse.Content);
@@ -186,15 +195,12 @@ namespace FioRino_NewProject.Services
                     foreach (var file in Images)
                     {
                         var findOrder = await _OrderProductRepository.GetOrderProductListByOrderIdAsync(OrderId);
-                        if (findOrder[numArray].Gtin == null) { break; }
-
-                        if (findOrder[numArray].ProductStatusesId == 1)
-                        {
-                            var fileLen = Convert.ToInt32(file.Length);
-                            var zipArchiveEntry = archive.CreateEntry(findOrder[numArray].Gtin + ".pdf", System.IO.Compression.CompressionLevel.Fastest);
-                            using (var zipStream = zipArchiveEntry.Open())
-                                zipStream.Write(file.ToArray(), 0, fileLen);
-                        }
+                        if (findOrder[numArray].Gtin == null)
+                            break;
+                        var fileLen = Convert.ToInt32(file.Length);
+                        var zipArchiveEntry = archive.CreateEntry(findOrder[numArray].Gtin + ".pdf", System.IO.Compression.CompressionLevel.Fastest);
+                        using (var zipStream = zipArchiveEntry.Open())
+                            zipStream.Write(file.ToArray(), 0, fileLen);
                         numArray++;
                     }
                     archiveStream.Flush();
@@ -239,7 +245,7 @@ namespace FioRino_NewProject.Services
                             item.ProductStatusesId = 2;
                             findFromStan.AmountLeft = findFromStan.AmountLeft - item.Amount;
                         }
-                        if (findFromStan.AmountLeft < item.Amount)
+                        else if(findFromStan.AmountLeft < item.Amount)
                         {
                             item.ProductStatusesId = 1;
                         }

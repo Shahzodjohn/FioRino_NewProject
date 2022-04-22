@@ -32,7 +32,7 @@ namespace FioRino_NewProject.Services
         public async Task DownloadZip()
         {
             var rootPath = _environment.WebRootPath;
-            //var zipDirectory = rootPath + "\\Zips";
+           // var zipDirectory = rootPath + "\\Zips";
            var zipDirectory = rootPath + "/Zips/";
   
             var originalEntity = await _statusRepository.GetFirst();
@@ -185,8 +185,8 @@ namespace FioRino_NewProject.Services
         public async Task ZipStatusCheck(int TotalAmount)
         {
             var rootPath = _environment.WebRootPath;
-            //var ZipPath = rootPath + "/Zips/";
-            var ZipPath = rootPath + "\\Zips";
+            var ZipPath = rootPath + "/Zips/";
+            //var ZipPath = rootPath + "\\Zips";
             int num = 0;
             for (int i = 0 ; ; i++)
             {
@@ -213,6 +213,7 @@ namespace FioRino_NewProject.Services
                 originalEntity.Status = "UNZIPPING";
                 await _context.SaveChangesAsync();
                 string[] files = Directory.GetFiles($"{ZipPath}", "*.zip");
+                //var FileName = files[0].Replace("D:\\repos\\FioRino_NewProject\\FioRino_NewProject\\wwwroot\\Zips\\","");
                 var FileName = files[0].Split('/').Last();
                 var ZipAddress = ZipPath + "/" + FileName;
                 ZipFile.ExtractToDirectory(ZipAddress, ZipPath);

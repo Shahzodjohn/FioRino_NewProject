@@ -132,7 +132,7 @@ namespace FioRino_NewProject.Services
                         }
                         else
                             skuCodeId = 0;
-                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts, skuCodeId);
+                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts.Trim(), skuCodeId);
                         var splitLastIndex = ProductFullName.ToString().Split(" ").Last();
                         if (MatchingProducts.Split(" ").Last() == "M" ||
                             MatchingProducts.Split(" ").Last() == "S" ||

@@ -1,8 +1,10 @@
 ﻿using FioRino_NewProject.Controllers;
+using FioRino_NewProject.Data;
 using FioRino_NewProject.DataTransferObjects;
 using FioRino_NewProject.Model;
 using FioRino_NewProject.Repositories;
 using FioRino_NewProject.Responses;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,14 +19,16 @@ namespace FioRino_NewProject.Services
         private readonly ISaveRepository _save;
         private readonly IProductRepository _pRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly FioRinoBaseContext _context;
 
-        public OrderProductService(IOrderRepository orderRepository, IProductRepository pRepository, ISaveRepository save, IStorageRepository storageRepository, IOrderProductsRepository opRepository)
+        public OrderProductService(IOrderRepository orderRepository, IProductRepository pRepository, ISaveRepository save, IStorageRepository storageRepository, IOrderProductsRepository opRepository, FioRinoBaseContext context)
         {
             _orderRepository = orderRepository;
             _pRepository = pRepository;
             _save = save;
             _storageRepository = storageRepository;
             _opRepository = opRepository;
+            _context = context;
         }
 
         public async Task<Response> DeleteDmOrderProducts(List<int> Ids)
@@ -45,14 +49,15 @@ namespace FioRino_NewProject.Services
                         _opRepository.Delete(items);
                         await _save.SaveAsync();
                     }
+                    var opList = await _context.DmOrderProducts.Where(x => x.Gtin == item.Gtin).AsNoTracking().ToListAsync();
                     var findDmOrderProducts = await _storageRepository.GetOrderProductListAsync(item.Gtin);
-                    foreach (var orderProducts in findDmOrderProducts)
+                    foreach (var orderProducts in findDmOrderProducts/*opList*/)
                     {
                         var Order = await _orderRepository.FindOrder(orderProducts.OrderId);
                         if (Order.IsInArchievum != true)
                         {
                             var FindStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
-                            if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount)
+                            if (findStorage != null && findStorage.AmountLeft >= orderProducts.Amount && orderProducts.ProductStatusesId == 1)
                             {
                                 orderProducts.ProductStatusesId = 2;
                                 findStorage.AmountLeft = findStorage.AmountLeft - orderProducts.Amount;
@@ -128,12 +133,11 @@ namespace FioRino_NewProject.Services
         }
 
         
-
-        public async Task<Response> PostDmOrdersSendToArchivum(int OrderId)
+        public async Task<Response> PostDmOrdersSendToArchivum(SendToArchivumDTO dTO)
         {
             using (SPToCoreContext db = new SPToCoreContext())
             {
-                var findOrderProduct = await _opRepository.GetOrderProductListByOrderIdAsync(OrderId);
+                var findOrderProduct = await _opRepository.GetOrderProductListByOrderIdAsync(dTO.OrderId);
                 foreach (var item in findOrderProduct)
                 {
                     var findStorage = await _storageRepository.FindFromStorageByGtinAsync(item.Gtin);
@@ -143,9 +147,9 @@ namespace FioRino_NewProject.Services
                     }
                     item.ProductStatusesId = 4;
                 }
-                var findOrder = await _orderRepository.FindOrder(OrderId);
+                var findOrder = await _orderRepository.FindOrder(dTO.OrderId);
                 findOrder.DateOfRelease = DateTime.Now;
-                db.EXPOSE_dm_Orders_SendToArchivum /**/ (OrderId);
+                db.EXPOSE_dm_Orders_SendToArchivum /**/ (dTO.OrderId);
                 await _save.SaveAsync();
                 return new Response { Status = "Ok", Message = "Success!" };
             }

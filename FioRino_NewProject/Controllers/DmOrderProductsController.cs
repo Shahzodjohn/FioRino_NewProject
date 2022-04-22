@@ -45,7 +45,7 @@ namespace FioRino_NewProject.Controllers
         public async Task<IActionResult> UpdateProducts([FromBody] OrderProductDTO dTO)
         {
             var responseMessage = await _opService.UpdateProducts(dTO);
-            if (responseMessage.Status == "Ok")
+            if (responseMessage.Status == "OK")
             {
                 return Ok(new Response { Status = responseMessage.Status, Message = responseMessage.Message });
             }

@@ -79,9 +79,9 @@ namespace FioRino_NewProject.Controllers
         }
 
         [HttpPost("SendToArchivum")]
-        public async Task<ActionResult> PostDmOrdersSendToArchivum([FromBody]int OrderId)
+        public async Task<ActionResult> PostDmOrdersSendToArchivum([FromBody] SendToArchivumDTO dTO)
         {
-            var responseMessage = await _orderProductService.PostDmOrdersSendToArchivum(OrderId);
+            var responseMessage = await _orderProductService.PostDmOrdersSendToArchivum(dTO);
             if (responseMessage.Status == "Ok")
             {
                 return Ok(new Response { Status = responseMessage.Status, Message = responseMessage.Message });

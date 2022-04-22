@@ -57,7 +57,7 @@ namespace FioRino_NewProject.Services
                 RoleId = dto.RoleId,
                 PositionId = dto.PositionId
             };
-            _context.DmUsers.Add(user);
+            _context.DmUsers.Add(user); 
             await _context.SaveChangesAsync();
             if (user.RoleId == 1)
             {
@@ -118,7 +118,7 @@ namespace FioRino_NewProject.Services
             var userExists = await _context.DmUsers.FirstOrDefaultAsync(x => x.Id == dto.Id);
             var userRole = await _context.DmUsers.FirstOrDefaultAsync(x => x.RoleId == userExists.RoleId);
             var userRoles = userRole.RoleId;
-            var authClaims = new List<Claim>
+                var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, userExists.Email),
                     new Claim(ClaimTypes.NameIdentifier, userExists.Id.ToString()),

@@ -17,14 +17,16 @@ namespace FioRino_NewProject.Services
         private readonly IOrderProductsRepository _opRepository;
         private readonly IStorageRepository _storageRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ISaveRepository _save;
 
-        public OrderService(FioRinoBaseContext context, IOrderRepository oRepository, IStorageRepository storageRepository, IOrderProductsRepository opRepository, IUserRepository userRepository)
+        public OrderService(FioRinoBaseContext context, IOrderRepository oRepository, IStorageRepository storageRepository, IOrderProductsRepository opRepository, IUserRepository userRepository, ISaveRepository save)
         {
             _context = context;
             _oRepository = oRepository;
             _storageRepository = storageRepository;
             _opRepository = opRepository;
             _userRepository = userRepository;
+            _save = save;
         }
 
 
@@ -45,15 +47,14 @@ namespace FioRino_NewProject.Services
                     foreach (var items in findProduct)
                     {
                         var findStorage = await _storageRepository.FindFromStorageByGtinAsync(items.Gtin);
-                        if (findStorage != null && items.ProductStatusesId == 2 || items.ProductStatusesId == 1 || items.ProductStatusesId == 4)
+                        if (findStorage != null && items.ProductStatusesId == 2 || items.ProductStatusesId == 1)
                         {
                             if (items.ProductStatusesId != 1)
                             {
                                 findStorage.AmountLeft = findStorage.AmountLeft + items.Amount;
                             }
-
-                            _context.DmOrderProducts.RemoveRange(items);
-                            await _context.SaveChangesAsync();
+                            _opRepository.Delete(items);
+                            await _save.SaveAsync();
                         }
                     }
                     var findDmOrderProducts = await _opRepository.GetOrderProductListByGtinAsync(item.Gtin);

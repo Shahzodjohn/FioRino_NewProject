@@ -12,7 +12,7 @@ namespace FioRino_NewProject.Services
         Task<Response> PostDmOrderProductsInsertProduct(InsertProductParams parameters);
         Task<Response> DeleteDmOrderProducts(List<int> Ids);
         Task<Response> UpdateProducts(OrderProductDTO dTO);
-        Task<Response> PostDmOrdersSendToArchivum(int OrderId);
+        Task<Response> PostDmOrdersSendToArchivum(SendToArchivumDTO dTO);
         
 
     }
