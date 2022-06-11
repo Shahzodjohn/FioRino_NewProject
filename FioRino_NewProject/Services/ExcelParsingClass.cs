@@ -132,14 +132,14 @@ namespace FioRino_NewProject.Services
                         }
                         else
                             skuCodeId = 0;
-                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts.Trim(), skuCodeId);
+                        int ProductUniqueId = await _uniqueProductRepository.InsertUniqueProductIfNull(MatchingProducts.Trim()/*, skuCodeId*/);
                         var splitLastIndex = ProductFullName.ToString().Split(" ").Last();
                         if (MatchingProducts.Split(" ").Last() == "M" ||
                             MatchingProducts.Split(" ").Last() == "S" ||
                             MatchingProducts.Split(" ").Last() == "L" ||
-                           MatchingProducts.Split(" ").Last() == "XL" ||
-                           MatchingProducts.Split(" ").Last() == "XS" ||
-                           MatchingProducts.Split(" ").Last() == "2XL")
+                            MatchingProducts.Split(" ").Last() == "XL" ||
+                            MatchingProducts.Split(" ").Last() == "XS" ||
+                            MatchingProducts.Split(" ").Last() == "2XL")
                         {
                             FindSizeAlphabet = MatchingProducts.Split(" ").Last();
                             var SizeAlphabet = MatchingProducts.LastIndexOf(" ");

@@ -60,7 +60,7 @@ namespace FioRino_NewProject.Services
                             where c.UserId == compare.Id
                             select c).FirstOrDefault();
 
-            var findIDs = await _context.DmCodesForResetPasswords.FirstOrDefaultAsync(x => x.UserId == compare.Id);
+            //var findIDs = await _context.DmCodesForResetPasswords.FirstOrDefaultAsync(x => x.UserId == compare.Id);
 
             var date = DateTime.Now.AddHours(2);
             if (compare != null)

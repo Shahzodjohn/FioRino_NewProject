@@ -55,7 +55,8 @@ namespace FioRino_NewProject.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=lab500.nc-one.com, 1530;Database=FioRinoBase;User ID=sa;Password=KFaerZ2dZRiM");
+                optionsBuilder.UseSqlServer("Server=fiorino.nc-one.com, 59933;Database=FioRinoBaseData;User ID=sa;Password=feX9B5Qk4waS");
+                //optionsBuilder.UseSqlServer("Server=lab500.nc-one.com, 1530;Database=FioRinoBase;User ID=sa;Password=KFaerZ2dZRiM");
                 //optionsBuilder.UseSqlServer("Data source = SHAHZOD;initial catalog = FioRinoBase; integrated security = true;MultipleActiveResultSets=True;");
             }
         }
@@ -446,10 +447,10 @@ namespace FioRino_NewProject.Data
 
                 entity.Property(e => e.ProductName).HasMaxLength(250);
 
-                entity.HasOne(d => d.SkuCode)
-                    .WithMany(p => p.DmUniqueProducts)
-                    .HasForeignKey(d => d.SkuCodeId)
-                    .HasConstraintName("FK__dm_Unique__SkuCo__52E34C9D");
+                //entity.HasOne(d => d.SkuCode)
+                //    .WithMany(p => p.DmUniqueProducts)
+                //    .HasForeignKey(d => d.SkuCodeId)
+                //    .HasConstraintName("FK__dm_Unique__SkuCo__52E34C9D");
             });
 
             modelBuilder.Entity<DmUser>(entity =>

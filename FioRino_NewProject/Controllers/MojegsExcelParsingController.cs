@@ -30,7 +30,7 @@ namespace FioRino_NewProject.Controllers
                 await _ParsingByDownloadingExcel.DownloadZip();
                 var rootPath = _environment.WebRootPath;
                 var ZipPath = rootPath + "/Zips/";
-                //var ZipPath = rootPath + "\\Zips";
+               // var ZipPath = rootPath + "\\Zips";
                 var TotalAmount = _ParsingByDownloadingExcel.GetProductAmount();
                 await _ParsingByDownloadingExcel.UnzipZip(ZipPath, TotalAmount);
                 string[] XlsxFiles = Directory.GetFiles($"{ZipPath}", "*.xlsx");
